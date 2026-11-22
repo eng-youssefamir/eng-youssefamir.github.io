@@ -11,9 +11,7 @@ window.SITE = {
   "links": {
     "linkedin": "https://linkedin.com/in/youssef-amir-219a26379",
     "github": "https://github.com/eng-youssefamir",
-    "blog": "https://lam-tokhlaq.blogspot.com",
-    "youtube": "",
-    "community": ""
+    "blog": "https://lam-tokhlaq.blogspot.com"
   },
   "hero": {
     "hello": "Hi, I'm Youssef Amir.",
@@ -205,6 +203,10 @@ window.SITE = {
     }
   ],
   "books": [
+    {
+      "id": "book-mwrcpyaa",
+      "status": "read"
+    },
     {
       "id": "i-hate-you-dont-leave-me",
       "title": "I Hate You, Don't Leave Me",
@@ -439,7 +441,8 @@ window.SITE = {
       "title": "Meditations",
       "author": "Marcus Aurelius",
       "status": "read",
-      "topic": "Philosophy"
+      "topic": "Philosophy",
+      "cover": "covers/meditations.jpg?v=1795322518936"
     }
   ],
   "certificates": [
