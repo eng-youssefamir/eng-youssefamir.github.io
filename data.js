@@ -449,6 +449,7 @@ window.SITE = {
       "date": "Apr 20, 2026",
       "type": "Course certificate",
       "detail": "10 Hours",
+      "id": "coursera.org/account/accomplishments/certificate/DUSS22Z8361B",
       "verify": "https://coursera.org/share/f3f4532d5ca22b5e73d4fd7980ca1e76"
     },
     {
