@@ -7,7 +7,7 @@
   // The admin panel drops empty fields, so give every section a safe default.
   ['links', 'hero', 'about', 'cv', 'now'].forEach(function (k) { S[k] = S[k] || {}; });
   ['books', 'certificates', 'education', 'experience', 'skills', 'languages', 'interests', 'path', 'method',
-    'labs', 'labEnvironment', 'focus', 'howIWork', 'confidential'].forEach(function (k) { S[k] = S[k] || []; });
+    'labs', 'projects', 'labEnvironment', 'focus', 'howIWork', 'confidential'].forEach(function (k) { S[k] = S[k] || []; });
   S.now.console = S.now.console || [];
   S.links.blog = S.links.blog || 'https://lam-tokhlaq.blogspot.com';
   S.initials = S.initials || 'YA';
@@ -24,7 +24,8 @@
 
   var STATE = { 'done': 'Done', 'in-progress': 'In progress', 'next': 'Next', 'later': 'Later' };
   var BOOK_STATUS = { reading: 'Reading', read: 'Read', next: 'Up next' };
-  var COVER_COLORS = ['#7B1E36', '#222B33', '#3F5B4B', '#8A5A2B', '#3A3F63', '#5B5560'];
+  var COVER_COLORS = ['#7B1E36', '#1F4FD1', '#0B7A75', '#B85C12', '#6B3FB8', '#C2307F', '#1F8A5F', '#222B33', '#8A5A2B', '#0E86B0'];
+  var PAGE_COLORS = { index: '#7B1E36', about: '#0B7A75', projects: '#2B55D6', library: '#B85C12', blog: '#6B3FB8', certificates: '#1F8A5F', community: '#C2307F', contact: '#0E86B0' };
 
   /* ---------- helpers ---------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -89,7 +90,7 @@
       h('span', { class: 'brand-name', text: S.name }));
     var nav = h('nav', { id: 'site-nav', class: 'nav', 'aria-label': 'Main' },
       NAV.map(function (n) {
-        return h('a', { href: n[1] === 'index' ? 'index.html' : n[1] + '.html', 'aria-current': n[1] === cur ? 'page' : null, text: n[0] });
+        return h('a', { href: n[1] === 'index' ? 'index.html' : n[1] + '.html', 'aria-current': n[1] === cur ? 'page' : null, style: '--c:' + PAGE_COLORS[n[1]], text: n[0] });
       }));
     var themeBtn = h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Switch between light and dark theme', onclick: toggleTheme });
     themeBtn.innerHTML = ICON.theme;
@@ -314,6 +315,7 @@
             f.link ? h('p', {}, h('a', { class: 'textlink', href: f.link, text: f.linkLabel || 'Read more' })) : null)));
       });
     }
+    renderStats($('#stats'));
     renderPosts($('#latest-posts'), 3);
     renderConsole($('#console'));
     renderCredsCompact($('#creds'));
@@ -359,6 +361,7 @@
   };
 
   PAGES.work = function () {
+    renderProgress($('#path-progress'));
     var ol = $('#path');
     if (ol) S.path.forEach(function (ph, i) {
       ol.append(h('li', { class: 'phase ' + ph.status },
@@ -390,25 +393,7 @@
     }
     var me = $('#method');
     if (me) S.method.forEach(function (m) { me.append(h('li', { text: m })); });
-    var labs = $('#labs');
-    if (labs) {
-      if (!S.labs.length) {
-        labs.append(h('div', { class: 'empty' },
-          h('p', { class: 'empty-title', text: 'No labs published yet.' }),
-          h('p', { text: 'Each lab will get a repository on GitHub and a short write-up covering the problem, the approach, and the result.' }),
-          h('a', Object.assign({ class: 'btn btn-ghost' }, ext(S.links.github)), 'Follow on GitHub')));
-      } else {
-        S.labs.forEach(function (l) {
-          labs.append(h('article', { class: 'kv' },
-            h('h3', { text: l.title }),
-            h('div', {},
-              h('p', {}, h('strong', { text: 'Problem. ' }), l.problem),
-              h('p', {}, h('strong', { text: 'What I did. ' }), l.did),
-              h('p', {}, h('strong', { text: 'Result. ' }), l.result),
-              l.repo ? h('a', Object.assign({ class: 'textlink' }, ext(l.repo)), 'View the repository') : null)));
-        });
-      }
-    }
+    renderProjects($('#projects-list'));
   };
 
   function bookCard(b) {
@@ -416,7 +401,7 @@
     var el = h('article', { class: 'book' }, cover(b));
     el.append(h('h3', { text: b.title }));
     el.append(h('p', { class: 'muted by', text: b.author }));
-    el.append(h('p', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small', text: b.topic }) : null));
+    el.append(h('p', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small topic', style: '--tc:' + COVER_COLORS[hash(b.topic) % COVER_COLORS.length], text: b.topic }) : null));
     if (b.rating) el.append(h('p', { class: 'stars', 'aria-label': 'Rated ' + b.rating + ' out of 5', text: '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) }));
     if (b.takeaway) el.append(h('p', { class: 'takeaway', text: b.takeaway }));
     if (b.note) el.append(h('p', { class: 'small', text: b.note }));
@@ -561,6 +546,195 @@
     if (btn) btn.addEventListener('click', function () { window.print(); });
   };
 
+  /* ---------- stats, progress, projects ---------- */
+  function pathProgress() {
+    var total = 0, got = 0;
+    S.path.forEach(function (ph) {
+      (ph.items || []).forEach(function (t) { total++; got += t.s === 'done' ? 1 : t.s === 'in-progress' ? 0.5 : 0; });
+    });
+    return total ? Math.round(got / total * 100) : 0;
+  }
+
+  function renderStats(el) {
+    if (!el) return;
+    var read = S.books.filter(function (b) { return b.status === 'read'; }).length;
+    var items = [
+      [read, 'books read', 's1'],
+      [S.certificates.length, 'certificates and courses', 's2'],
+      [S.path.length, 'phases on the platform roadmap', 's3'],
+      [pathProgress(), 'percent of the roadmap done', 's4', '%']
+    ];
+    items.forEach(function (it) {
+      var num = h('span', { class: 'stat-n', 'data-to': String(it[0]), 'data-suffix': it[3] || '', text: '0' + (it[3] || '') });
+      el.append(h('div', { class: 'stat ' + it[2] }, num, h('span', { class: 'stat-l', text: it[1] })));
+    });
+  }
+
+  function renderProgress(el) {
+    if (!el) return;
+    var pct = pathProgress();
+    var bar = h('div', { class: 'bar-track', role: 'img', 'aria-label': pct + ' percent of the roadmap is done' });
+    var fill = h('span', { class: 'bar-fill' });
+    fill.style.setProperty('--w', pct + '%');
+    bar.append(fill);
+    el.append(h('div', { class: 'progress-top' }, h('strong', { text: pct + '%' }), h('span', { text: 'of the roadmap is done' })), bar);
+  }
+
+  function ytId(u) {
+    var m = String(u || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? m[1] : '';
+  }
+  function safeUrl(u) { return /^(https?:\/\/|[\w./-]+(\?[\w=.&-]*)?$)/i.test(String(u || '')); }
+
+  var lb = null;
+  function lightbox(items, start) {
+    if (!items.length) return;
+    var i = start || 0, last = document.activeElement;
+    var stage = h('div', { class: 'lb-stage' });
+    var count = h('span', { class: 'lb-count' });
+    var prev = h('button', { class: 'lb-nav lb-prev', type: 'button', 'aria-label': 'Previous', onclick: function () { go(-1); } }, '‹');
+    var next = h('button', { class: 'lb-nav lb-next', type: 'button', 'aria-label': 'Next', onclick: function () { go(1); } }, '›');
+    var close = h('button', { class: 'lb-close', type: 'button', 'aria-label': 'Close', onclick: shut }, '✕');
+    var box = h('div', { class: 'lb', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Project media' }, close, prev, stage, next, count);
+    box.addEventListener('click', function (e) { if (e.target === box || e.target === stage) shut(); });
+    function show() {
+      stage.textContent = '';
+      var it = items[i];
+      if (it.type === 'yt') stage.append(h('iframe', { src: 'https://www.youtube-nocookie.com/embed/' + it.id + '?rel=0', title: 'Project video', allow: 'accelerometer; encrypted-media; picture-in-picture', allowfullscreen: '' }));
+      else if (it.type === 'video') stage.append(h('video', { src: it.src, controls: '', autoplay: '' }));
+      else stage.append(h('img', { src: it.src, alt: it.alt || '' }));
+      count.textContent = (i + 1) + ' / ' + items.length;
+      prev.hidden = next.hidden = items.length < 2;
+    }
+    function go(d) { i = (i + d + items.length) % items.length; show(); }
+    function key(e) {
+      if (e.key === 'Escape') shut();
+      else if (e.key === 'ArrowRight') go(document.dir === 'rtl' ? -1 : 1);
+      else if (e.key === 'ArrowLeft') go(document.dir === 'rtl' ? 1 : -1);
+    }
+    function shut() {
+      document.removeEventListener('keydown', key);
+      box.remove(); document.body.classList.remove('noscroll'); lb = null;
+      if (last && last.focus) last.focus();
+    }
+    document.addEventListener('keydown', key);
+    document.body.append(box); document.body.classList.add('noscroll');
+    lb = box; show(); close.focus();
+  }
+
+  function renderProjects(el) {
+    if (!el) return;
+    if (!S.projects.length) {
+      el.append(h('div', { class: 'empty' },
+        h('p', { class: 'empty-title', text: 'No public projects yet.' }),
+        h('p', { text: 'Each public project gets a short write-up with the problem, what I did, and the result, plus a repository and screenshots.' }),
+        h('a', Object.assign({ class: 'btn btn-ghost' }, ext(S.links.github)), 'Follow on GitHub')));
+      return;
+    }
+    var STATUS = { live: 'Live', building: 'In progress', finished: 'Finished' };
+    S.projects.forEach(function (p) {
+      var imgs = (p.images || []).filter(safeUrl);
+      var media = imgs.map(function (src) { return { type: 'img', src: src, alt: p.title }; });
+      var vid = '';
+      if (p.video && safeUrl(p.video)) {
+        var id = ytId(p.video);
+        if (id) { media.push({ type: 'yt', id: id }); vid = 'yt'; }
+        else if (/\.(mp4|webm)(\?.*)?$/i.test(p.video)) { media.push({ type: 'video', src: p.video }); vid = 'video'; }
+      }
+      var color = COVER_COLORS[hash(p.id || p.title) % COVER_COLORS.length];
+      var cover = h('button', { class: 'p-cover', type: 'button', 'aria-label': 'Open media for ' + p.title, onclick: function () { lightbox(media, 0); } });
+      if (imgs.length) cover.append(h('img', { src: imgs[0], alt: '', loading: 'lazy' }));
+      else { cover.style.background = color; cover.append(h('span', { class: 'p-cover-t', text: p.title })); }
+      if (!media.length) cover.disabled = true;
+      if (vid) cover.append(h('span', { class: 'p-play', 'aria-hidden': 'true', text: '▶' }));
+      var body = h('div', { class: 'p-body' },
+        h('div', { class: 'p-top' }, h('h3', { text: p.title }), p.status ? badge(STATUS[p.status] || p.status, p.status) : null));
+      if (p.role) body.append(h('p', { class: 'muted small', text: p.role }));
+      if (p.summary) body.append(h('p', { text: p.summary }));
+      var dl = h('dl', { class: 'p-dl' });
+      [['Problem', p.problem], ['What I did', p.did], ['Result', p.result]].forEach(function (r) {
+        if (r[1]) dl.append(h('dt', { text: r[0] }), h('dd', { text: r[1] }));
+      });
+      if (dl.children.length) body.append(dl);
+      if ((p.tags || []).length) body.append(h('ul', { class: 'tags' }, p.tags.map(function (t) { return h('li', { text: t }); })));
+      if (imgs.length > 1) {
+        body.append(h('div', { class: 'p-thumbs' }, imgs.slice(1).map(function (src, k) {
+          return h('button', { type: 'button', 'aria-label': 'Open image ' + (k + 2), onclick: function () { lightbox(media, k + 1); } },
+            h('img', { src: src, alt: '', loading: 'lazy' }));
+        })));
+      }
+      var acts = h('div', { class: 'actions' });
+      if (p.link && safeUrl(p.link)) acts.append(h('a', Object.assign({ class: 'btn btn-primary btn-sm' }, ext(p.link)), 'Open the project'));
+      if (p.repo && safeUrl(p.repo)) acts.append(h('a', Object.assign({ class: 'btn btn-ghost btn-sm' }, ext(p.repo)), 'Repository'));
+      if (p.video && safeUrl(p.video) && !vid) acts.append(h('a', Object.assign({ class: 'btn btn-ghost btn-sm' }, ext(p.video)), 'Watch the video'));
+      if (vid) acts.append(h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: function () { lightbox(media, media.length - 1); } }, 'Watch the video'));
+      if (acts.children.length) body.append(acts);
+      el.append(h('article', { class: 'project' }, cover, body));
+    });
+  }
+
+  /* ---------- motion: reveal on scroll, count-up, tilt, page fade ---------- */
+  function motion() {
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var counters = document.querySelectorAll('.stat-n');
+    function count(el) {
+      var to = Number(el.dataset.to) || 0, suf = el.dataset.suffix || '', t0 = null;
+      if (calm || !to) { el.textContent = to + suf; return; }
+      function step(t) {
+        if (t0 === null) t0 = t;
+        var k = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(to * e) + suf;
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    var targets = document.querySelectorAll('main .section, main .page-head, .book, .row, .cert, .phase, .stat, .project, .kv, .lanes, .band, .bar-track');
+    if (calm || !('IntersectionObserver' in window)) { counters.forEach(count); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        if (en.target.classList.contains('stat')) count(en.target.querySelector('.stat-n'));
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -4% 0px' });
+    targets.forEach(function (el, i) {
+      el.classList.add('rv');
+      el.style.setProperty('--d', ((i % 6) * 70) + 'ms');
+      io.observe(el);
+    });
+    setTimeout(function () { document.querySelectorAll('.rv:not(.in)').forEach(function (el) { el.classList.add('in'); }); counters.forEach(function (c) { if (c.textContent === '0' || c.textContent === '0%') count(c); }); }, 3500);
+
+    if (window.matchMedia('(hover: hover)').matches) {
+      document.addEventListener('pointermove', function (e) {
+        var c = e.target.closest && e.target.closest('.book .cover');
+        if (!c) return;
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--ry', ((e.clientX - r.left) / r.width - 0.5) * 14 + 'deg');
+        c.style.setProperty('--rx', (0.5 - (e.clientY - r.top) / r.height) * 14 + 'deg');
+      });
+      document.addEventListener('pointerout', function (e) {
+        var c = e.target.closest && e.target.closest('.book .cover');
+        if (c) { c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); }
+      });
+    }
+  }
+
+  function pageLinks() {
+    window.addEventListener('pageshow', function () { document.body.classList.remove('leaving'); });
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
+      var u;
+      try { u = new URL(a.href, location.href); } catch (x) { return; }
+      if (u.origin !== location.origin || u.pathname === location.pathname || !/\.html$|\/$/.test(u.pathname)) return;
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      e.preventDefault();
+      document.body.classList.add('leaving');
+      setTimeout(function () { location.href = u.href; }, 170);
+    });
+  }
+
   /* ---------- boot ---------- */
   function bind() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-bind]'), function (el) {
@@ -574,4 +748,6 @@
   bind();
   var page = document.body.dataset.page;
   if (PAGES[page]) PAGES[page]();
+  motion();
+  pageLinks();
 })();

@@ -3,15 +3,17 @@ window.SITE = {
   "url": "https://eng-youssefamir.github.io",
   "name": "Youssef Amir",
   "initials": "YA",
-  "role": "Platform Engineer",
+  "role": "Platform Engineer in the making",
   "availability": "Open to entry-level and remote roles in platform, infrastructure, and DevOps.",
-  "email": "eng.youssefamir@gmail.com",
+  "email": "youssefamirabdelhamid@gmail.com",
   "location": "Egypt",
   "photo": "photo.jpg",
   "links": {
     "linkedin": "https://linkedin.com/in/youssef-amir-219a26379",
     "github": "https://github.com/eng-youssefamir",
-    "blog": "https://lam-tokhlaq.blogspot.com"
+    "blog": "https://lam-tokhlaq.blogspot.com",
+    "youtube": "",
+    "community": ""
   },
   "hero": {
     "hello": "Hi, I'm Youssef Amir.",
@@ -30,7 +32,7 @@ window.SITE = {
   "focus": [
     {
       "title": "Platform and infrastructure",
-      "text": "I'm learning the systems layer from the ground up: Linux, networking, containers, and the automation that ties them together. The roadmap, the status of every step, and the labs are public.",
+      "text": "I'm learning the systems layer from the ground up: Linux, networking, containers, and the automation that ties them together. The roadmap, the status of every step, and the projects are public.",
       "link": "projects.html",
       "linkLabel": "See the platform path"
     },
@@ -58,7 +60,7 @@ window.SITE = {
     },
     {
       "title": "Document as I go",
-      "text": "Notes, write-ups, and public labs, so the work can be checked by anyone who wants to."
+      "text": "Notes, write-ups, and public projects, so the work can be checked by anyone who wants to."
     }
   ],
   "now": {
@@ -195,6 +197,7 @@ window.SITE = {
     }
   ],
   "labs": [],
+  "projects": [],
   "confidential": [
     {
       "title": "Copywriting and ghostwriting",
@@ -436,8 +439,7 @@ window.SITE = {
       "title": "Meditations",
       "author": "Marcus Aurelius",
       "status": "read",
-      "topic": "Philosophy",
-      "cover": "covers/meditations.jpg?v=1795319770513"
+      "topic": "Philosophy"
     }
   ],
   "certificates": [

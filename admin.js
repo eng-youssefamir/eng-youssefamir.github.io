@@ -386,6 +386,29 @@
       ]
     },
     {
+      id: 'projects', label: 'المشاريع',
+      intro: 'أضف مشاريعك العلنية بالاسم والرابط والصور والفيديو. لا تنشر هنا أي عمل سري لعميل أو جهة.',
+      blocks: [
+        { type: 'list', title: 'المشاريع', path: 'projects', newLabel: 'مشروع جديد', addLabel: 'إضافة مشروع', addTop: true, search: true,
+          itemTitle: function (it) { return it.title; },
+          itemMeta: function (it) { var s = [['live', 'يعمل'], ['building', 'قيد العمل'], ['finished', 'منتهٍ']].filter(function (x) { return x[0] === it.status; })[0]; return s ? s[1] : ''; },
+          fields: [
+            { k: 'title', label: 'اسم المشروع', t: 'text', ltr: true, wide: true },
+            { k: 'status', label: 'الحالة', t: 'select', options: [['building', 'قيد العمل'], ['live', 'يعمل الآن'], ['finished', 'منتهٍ']] },
+            { k: 'role', label: 'دورك (مثل Personal project)', t: 'text', ltr: true },
+            { k: 'summary', label: 'وصف قصير', t: 'textarea', rows: 3, wide: true, ltr: true },
+            { k: 'problem', label: 'المشكلة (اختياري)', t: 'textarea', rows: 2, wide: true, ltr: true },
+            { k: 'did', label: 'ما فعلته (اختياري)', t: 'textarea', rows: 3, wide: true, ltr: true },
+            { k: 'result', label: 'النتيجة (اختياري)', t: 'textarea', rows: 2, wide: true, ltr: true },
+            { k: 'tags', label: 'التقنيات (واحدة في كل سطر، مثل Linux)', t: 'lines', rows: 4, ltr: true },
+            { k: 'link', label: 'رابط المشروع (اختياري)', t: 'text', ltr: true },
+            { k: 'repo', label: 'رابط المستودع على GitHub (اختياري)', t: 'text', ltr: true },
+            { k: 'video', label: 'رابط الفيديو', t: 'text', ltr: true, wide: true, help: 'الأفضل رابط YouTube (يمكن أن يكون Unlisted)، فيُشغَّل داخل الموقع. لا ترفع فيديو على GitHub لأنه ثقيل.' },
+            { k: 'images', label: 'الصور (الأولى هي الغلاف)', t: 'images', wide: true }
+          ], blank: function () { return { id: '', title: '', status: 'building', summary: '' }; } }
+      ]
+    },
+    {
       id: 'path', label: 'المسار والمشاريع',
       intro: 'خارطة تعلمك وحالة كل خطوة، والمشاريع العلنية التي تنجزها.',
       blocks: [
@@ -414,16 +437,6 @@
             { k: 'k', label: 'الوسم', t: 'text', ltr: true },
             { k: 'v', label: 'القيمة', t: 'text', ltr: true }
           ], blank: function () { return { k: '', v: '' }; } },
-        { type: 'list', title: 'المشاريع العلنية (Labs)', path: 'labs', newLabel: 'مشروع جديد', addLabel: 'إضافة مشروع', addTop: true,
-          help: 'كل مشروع: المشكلة، وما فعلته، والنتيجة، ورابط المستودع.',
-          itemTitle: function (it) { return it.title; },
-          fields: [
-            { k: 'title', label: 'اسم المشروع', t: 'text', ltr: true, wide: true },
-            { k: 'problem', label: 'المشكلة', t: 'textarea', rows: 2, wide: true },
-            { k: 'did', label: 'ما فعلته', t: 'textarea', rows: 3, wide: true },
-            { k: 'result', label: 'النتيجة', t: 'textarea', rows: 2, wide: true },
-            { k: 'repo', label: 'رابط المستودع على GitHub', t: 'text', ltr: true, wide: true }
-          ], blank: function () { return { title: '', problem: '', did: '', result: '', repo: '' }; } },
         { type: 'list', title: 'الأعمال السرية', path: 'confidential', newLabel: 'عمل جديد', addLabel: 'إضافة عمل',
           itemTitle: function (it) { return it.title; },
           fields: [
@@ -487,6 +500,9 @@
       case 'cover':
         input = coverEditor(id, obj, def, onChange);
         break;
+      case 'images':
+        input = imagesEditor(obj, def);
+        break;
       default:
         input = h('input', { id: id, type: 'text', dir: def.ltr ? 'ltr' : 'auto', spellcheck: def.ltr ? 'false' : null });
         input.value = val == null ? '' : String(val);
@@ -546,6 +562,43 @@
     var row = h('div', { class: 'coverrow' }, text, file);
     var box = h('div', {}, row, prev, msg);
     box.id = null;
+    return box;
+  }
+
+  function imagesEditor(obj, def) {
+    var box = h('div', {});
+    var strip = h('div', { class: 'imgstrip' });
+    var msg = h('span', { class: 'help' });
+    var file = h('input', { type: 'file', accept: 'image/*', multiple: '', 'aria-label': 'رفع صور' });
+    function paint() {
+      strip.textContent = '';
+      var arr = getV(obj, def.k) || [];
+      arr.forEach(function (src, i) {
+        strip.append(h('div', { class: 'imgcell' },
+          h('img', { src: src, alt: '' }),
+          h('button', { type: 'button', class: 'mini-btn del', 'aria-label': 'حذف الصورة', onclick: function () {
+            arr.splice(i, 1); setV(obj, def.k, arr); markDirty(); paint();
+          } }, '✕')));
+      });
+    }
+    file.addEventListener('change', function () {
+      var files = Array.prototype.slice.call(file.files || []);
+      if (!files.length) return;
+      if (!obj.id) obj.id = slug(obj.title) || ('project-' + Date.now().toString(36));
+      var arr = getV(obj, def.k) || [];
+      msg.textContent = 'يرفع ' + files.length + ' صورة…';
+      files.reduce(function (chain, f, k) {
+        return chain.then(function () {
+          var path = 'projects/' + obj.id + '-' + Date.now().toString(36) + k + '.jpg';
+          return uploadImage(f, path, 1400).then(function () { arr.push(path); setV(obj, def.k, arr); paint(); });
+        });
+      }, Promise.resolve()).then(function () {
+        markDirty(); file.value = '';
+        msg.textContent = 'رُفعت الصور. اضغط "حفظ التغييرات" لتثبيتها.';
+      }).catch(function (e) { msg.textContent = 'تعذّر الرفع: ' + e.message; });
+    });
+    paint();
+    box.append(strip, file, msg);
     return box;
   }
 
