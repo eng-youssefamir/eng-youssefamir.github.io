@@ -203,6 +203,10 @@ window.SITE = {
   ],
   "books": [
     {
+      "id": "book-mwrb1m4o",
+      "status": "read"
+    },
+    {
       "id": "i-hate-you-dont-leave-me",
       "title": "I Hate You, Don't Leave Me",
       "author": "Jerold J. Kreisman and Hal Straus",
@@ -436,7 +440,8 @@ window.SITE = {
       "title": "Meditations",
       "author": "Marcus Aurelius",
       "status": "read",
-      "topic": "Philosophy"
+      "topic": "Philosophy",
+      "cover": "covers/meditations.jpg?v=1795319770513"
     }
   ],
   "certificates": [
