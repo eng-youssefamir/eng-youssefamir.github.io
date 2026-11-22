@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library | Youssef Amir</title>
+<meta name="description" content="The books I'm reading and the ones I've broken down on my Arabic blog, with a search and filters.">
+<link rel="canonical" href="https://eng-youssefamir.github.io/library">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Youssef Amir">
+<meta property="og:title" content="Library | Youssef Amir">
+<meta property="og:description" content="The books I'm reading and the ones I've broken down on my Arabic blog, with a search and filters.">
+<meta property="og:url" content="https://eng-youssefamir.github.io/library">
+<meta name="theme-color" content="#7B1E36">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%237B1E36'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='27' text-anchor='middle' fill='%23FBF3F5'%3EYA%3C/text%3E%3C/svg%3E">
+<script>try{var t=localStorage.getItem('theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Cairo:wght@400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="library">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header" id="site-header"></header>
+<main id="main">
+<section class="wrap page-head">
+  <h1>Library</h1>
+  <p class="lead">The books I'm reading now, and the ones I've turned into article series on the blog.</p>
+</section>
+
+<section class="wrap" style="padding-bottom:24px">
+  <div class="controls">
+    <label class="sr-only" for="q">Search the library</label>
+    <input id="q" class="search" type="search" placeholder="Search by title, author, or topic" autocomplete="off">
+    <div id="chips" class="chips" role="group" aria-label="Filter by status"></div>
+    <span id="count" class="count" aria-live="polite"></span>
+  </div>
+  <div id="shelf" class="shelf"></div>
+  <div id="empty" class="empty" hidden>
+    <p class="empty-title">No books match.</p>
+    <p>Try a different word, or clear the search and filter.</p>
+    <button id="clear" class="btn btn-ghost" type="button">Clear search and filter</button>
+  </div>
+</section>
+</main>
+<footer class="site-footer" id="site-footer"></footer>
+<noscript><p class="wrap">This site uses a little JavaScript for the menu and the lists. Please turn it on to see everything.</p></noscript>
+</body>
+</html>
