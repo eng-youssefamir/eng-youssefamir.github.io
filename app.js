@@ -149,8 +149,47 @@
     } else {
       el.style.background = color;
       el.append(h('span', { class: 'cover-title', text: b.title }), h('span', { class: 'cover-band' }), h('span', { class: 'cover-author', text: b.author }));
+      findCover(b, function (url) {
+        var img = new Image();
+        img.alt = '';
+        img.onload = function () {
+          if (img.naturalWidth < 20) return;
+          el.textContent = '';
+          el.style.background = '';
+          el.classList.add('img');
+          el.append(img);
+        };
+        img.src = url;
+      });
     }
     return el;
+  }
+
+  /* Books without an uploaded cover look for one on Open Library, then keep the answer in this browser. */
+  var coverQueue = [], coverBusy = 0;
+  function coverKey(b) { return 'cov2:' + (b.id || b.title); }
+  function findCover(b, cb) {
+    var key = coverKey(b), cached = null;
+    try { cached = localStorage.getItem(key); } catch (e) { /* storage blocked */ }
+    if (cached === '-') return;
+    if (cached) return cb(cached);
+    coverQueue.push({ b: b, cb: cb, key: key });
+    pumpCovers();
+  }
+  function pumpCovers() {
+    while (coverBusy < 3 && coverQueue.length) {
+      (function (job) {
+        coverBusy++;
+        var first = String(job.b.author || '').split(/ and |, | & /)[0];
+        var u = 'https://openlibrary.org/search.json?limit=1&fields=cover_i&title=' + encodeURIComponent(job.b.title) + '&author=' + encodeURIComponent(first);
+        fetch(u).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+          var id = j && j.docs && j.docs[0] && j.docs[0].cover_i;
+          var url = id ? 'https://covers.openlibrary.org/b/id/' + id + '-M.jpg?default=false' : '-';
+          try { localStorage.setItem(job.key, url); } catch (e) { /* storage blocked */ }
+          if (id) job.cb(url);
+        }).catch(function () { /* offline or blocked: keep the generated cover */ }).then(function () { coverBusy--; pumpCovers(); });
+      })(coverQueue.shift());
+    }
   }
 
   function badge(text, cls) { return h('span', { class: 'badge' + (cls ? ' ' + cls : ''), text: text }); }
@@ -376,7 +415,6 @@
     var parts = [];
     var el = h('article', { class: 'book' }, cover(b));
     el.append(h('h3', { text: b.title }));
-    if (b.titleAr) el.append(h('p', { class: 'ar-line', lang: 'ar', text: b.titleAr }));
     el.append(h('p', { class: 'muted by', text: b.author }));
     el.append(h('p', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small', text: b.topic }) : null));
     if (b.rating) el.append(h('p', { class: 'stars', 'aria-label': 'Rated ' + b.rating + ' out of 5', text: '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) }));
@@ -407,7 +445,7 @@
       var list = S.books.filter(function (b) {
         if (state.status !== 'all' && b.status !== state.status) return false;
         if (!term) return true;
-        return [b.title, b.titleAr, b.author, b.topic].join(' ').toLowerCase().indexOf(term) !== -1;
+        return [b.title, b.author, b.topic].join(' ').toLowerCase().indexOf(term) !== -1;
       });
       grid.textContent = '';
       list.forEach(function (b) { grid.append(bookCard(b)); });

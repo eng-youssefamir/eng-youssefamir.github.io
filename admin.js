@@ -314,14 +314,13 @@
           itemMeta: function (it) { return (STATUS_LABEL[it.status] || '') + (it.author ? ' · ' + it.author : ''); },
           fields: [
             { k: 'title', label: 'عنوان الكتاب', t: 'text', ltr: true },
-            { k: 'titleAr', label: 'العنوان بالعربية', t: 'text' },
             { k: 'author', label: 'المؤلف', t: 'text', ltr: true },
             { k: 'status', label: 'الحالة', t: 'select', options: BOOK_STATUS },
             { k: 'topic', label: 'الموضوع (مثل Psychology)', t: 'text', ltr: true },
             { k: 'rating', label: 'تقييمك', t: 'select', options: RATING, int: true },
             { k: 'takeaway', label: 'أهم ما خرجت به (جملة أو جملتان)', t: 'textarea', rows: 3, wide: true },
             { k: 'note', label: 'ملاحظة قصيرة', t: 'text', wide: true },
-            { k: 'cover', label: 'صورة الغلاف (اختياري)', t: 'cover', wide: true },
+            { k: 'cover', label: 'صورة الغلاف', t: 'cover', wide: true, help: 'اتركها فارغة ليبحث الموقع عن الغلاف تلقائياً، أو ارفع صورة غلافك بنفسك وستظهر بدل التلقائي.' },
             { k: 'series', label: 'سلسلة على المدونة', t: 'object', toggle: 'لهذا الكتاب سلسلة مقالات على المدونة',
               blank: function () { return { title: '', state: 'in-progress' }; },
               fields: [
@@ -539,8 +538,13 @@
         msg.textContent = 'رُفعت الصورة. اضغط "حفظ التغييرات" لتثبيتها.';
       }).catch(function (e) { msg.textContent = 'تعذّر الرفع: ' + e.message; });
     });
+    var prev = h('img', { class: 'coverprev', alt: '', hidden: !text.value });
+    function showPrev() { prev.hidden = !text.value; if (text.value) prev.src = text.value; }
+    showPrev();
+    text.addEventListener('change', showPrev);
+    file.addEventListener('change', function () { if (file.files[0]) { prev.src = URL.createObjectURL(file.files[0]); prev.hidden = false; } });
     var row = h('div', { class: 'coverrow' }, text, file);
-    var box = h('div', {}, row, msg);
+    var box = h('div', {}, row, prev, msg);
     box.id = null;
     return box;
   }
@@ -590,7 +594,7 @@
       function paint() {
         title.textContent = (def.itemTitle ? def.itemTitle(it) : '') || def.newLabel;
         meta.textContent = def.itemMeta ? def.itemMeta(it) : '';
-        el.dataset.q = (title.textContent + ' ' + meta.textContent + ' ' + (it.titleAr || '')).toLowerCase();
+        el.dataset.q = (title.textContent + ' ' + meta.textContent).toLowerCase();
       }
       paint();
       var grid = h('div', { class: 'grid' });

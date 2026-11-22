@@ -106,3 +106,4 @@ body.admin { font-family: var(--f-ar); font-size: 1rem; line-height: 1.8; }
 html, body.admin { overflow-x: hidden; }
 .admin .skip { left: auto; right: 8px; top: -80px; }
 .admin .skip:focus { left: auto; right: 8px; top: 8px; }
+.coverprev { display: block; width: 90px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 3px; margin-top: 8px; background: var(--slate); }

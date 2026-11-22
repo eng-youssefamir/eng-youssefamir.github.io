@@ -5,13 +5,15 @@ window.SITE = {
   "initials": "YA",
   "role": "Platform Engineer in the making",
   "availability": "Open to entry-level and remote roles in platform, infrastructure, and DevOps.",
-  "email": "eng.youssefamir@gmail.com",
+  "email": "youssefamirabdelhamid@gmail.com",
   "location": "Egypt",
   "photo": "photo.jpg",
   "links": {
     "linkedin": "https://linkedin.com/in/youssef-amir-219a26379",
     "github": "https://github.com/eng-youssefamir",
-    "blog": "https://lam-tokhlaq.blogspot.com"
+    "blog": "https://lam-tokhlaq.blogspot.com",
+    "youtube": "",
+    "community": ""
   },
   "hero": {
     "hello": "Hi, I'm Youssef Amir.",
@@ -207,8 +209,7 @@ window.SITE = {
       "title": "I Hate You, Don't Leave Me",
       "author": "Jerold J. Kreisman and Hal Straus",
       "status": "reading",
-      "topic": "Psychology",
-      "titleAr": "أكرهك لا تتركني"
+      "topic": "Psychology"
     },
     {
       "id": "how-linux-works",
@@ -224,7 +225,6 @@ window.SITE = {
       "author": "Daniel Kahneman",
       "status": "read",
       "topic": "Psychology",
-      "titleAr": "التفكير السريع والبطيء",
       "note": "Being broken down for the blog, part by part.",
       "series": {
         "title": "التفكير السريع والبطيء",
@@ -239,7 +239,6 @@ window.SITE = {
       "author": "Daniel Goleman",
       "status": "read",
       "topic": "Psychology",
-      "titleAr": "الذكاء العاطفي",
       "series": {
         "title": "الذكاء العاطفي",
         "parts": 7,
@@ -253,7 +252,6 @@ window.SITE = {
       "author": "Carol S. Dweck",
       "status": "read",
       "topic": "Psychology",
-      "titleAr": "عقلية النمو",
       "series": {
         "title": "عقلية النمو",
         "state": "complete"
@@ -265,7 +263,6 @@ window.SITE = {
       "author": "James Clear",
       "status": "read",
       "topic": "Self-development",
-      "titleAr": "العادات الذرية",
       "series": {
         "title": "العادات الذرية",
         "state": "complete"
@@ -277,7 +274,6 @@ window.SITE = {
       "author": "Robert Greene",
       "status": "read",
       "topic": "Power and strategy",
-      "titleAr": "قواعد السطوة",
       "series": {
         "title": "قواعد السطوة",
         "state": "complete"
@@ -288,104 +284,91 @@ window.SITE = {
       "title": "The 7 Habits of Highly Effective People",
       "author": "Stephen R. Covey",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "العادات السبع للناس الأكثر فعالية"
+      "topic": "Self-development"
     },
     {
       "id": "how-to-win-friends",
       "title": "How to Win Friends and Influence People",
       "author": "Dale Carnegie",
       "status": "read",
-      "topic": "Relationships",
-      "titleAr": "كيف تكسب الأصدقاء وتؤثر في الناس"
+      "topic": "Relationships"
     },
     {
       "id": "think-and-grow-rich",
       "title": "Think and Grow Rich",
       "author": "Napoleon Hill",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "فكر وازدد ثراءً"
+      "topic": "Self-development"
     },
     {
       "id": "power-of-now",
       "title": "The Power of Now",
       "author": "Eckhart Tolle",
       "status": "read",
-      "topic": "Philosophy",
-      "titleAr": "قوة الآن"
+      "topic": "Philosophy"
     },
     {
       "id": "mans-search-for-meaning",
       "title": "Man's Search for Meaning",
       "author": "Viktor E. Frankl",
       "status": "read",
-      "topic": "Philosophy",
-      "titleAr": "الإنسان يبحث عن المعنى"
+      "topic": "Philosophy"
     },
     {
       "id": "deep-work",
       "title": "Deep Work",
       "author": "Cal Newport",
       "status": "read",
-      "topic": "Productivity",
-      "titleAr": "العمل العميق"
+      "topic": "Productivity"
     },
     {
       "id": "power-of-habit",
       "title": "The Power of Habit",
       "author": "Charles Duhigg",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "قوة العادات"
+      "topic": "Self-development"
     },
     {
       "id": "cant-hurt-me",
       "title": "Can't Hurt Me",
       "author": "David Goggins",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "لا يمكنك إيذائي"
+      "topic": "Self-development"
     },
     {
       "id": "ikigai",
       "title": "Ikigai",
       "author": "Héctor García and Francesc Miralles",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "إيكيغاي"
+      "topic": "Self-development"
     },
     {
       "id": "four-agreements",
       "title": "The Four Agreements",
       "author": "Don Miguel Ruiz",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "الاتفاقيات الأربع"
+      "topic": "Self-development"
     },
     {
       "id": "psychology-of-money",
       "title": "The Psychology of Money",
       "author": "Morgan Housel",
       "status": "read",
-      "topic": "Money",
-      "titleAr": "سيكولوجية المال"
+      "topic": "Money"
     },
     {
       "id": "rich-dad-poor-dad",
       "title": "Rich Dad Poor Dad",
       "author": "Robert T. Kiyosaki",
       "status": "read",
-      "topic": "Money",
-      "titleAr": "أبي الغني وأبي الفقير"
+      "topic": "Money"
     },
     {
       "id": "laws-of-human-nature",
       "title": "The Laws of Human Nature",
       "author": "Robert Greene",
       "status": "read",
-      "topic": "Psychology",
-      "titleAr": "قوانين الطبيعة البشرية"
+      "topic": "Psychology"
     },
     {
       "id": "awaken-the-giant-within",
@@ -399,24 +382,21 @@ window.SITE = {
       "title": "The 5 AM Club",
       "author": "Robin Sharma",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "نادي الخامسة صباحاً"
+      "topic": "Self-development"
     },
     {
       "id": "monk-who-sold-his-ferrari",
       "title": "The Monk Who Sold His Ferrari",
       "author": "Robin Sharma",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "الراهب الذي باع سيارته الفيراري"
+      "topic": "Self-development"
     },
     {
       "id": "magic-of-thinking-big",
       "title": "The Magic of Thinking Big",
       "author": "David J. Schwartz",
       "status": "read",
-      "topic": "Self-development",
-      "titleAr": "سحر التفكير الكبير"
+      "topic": "Self-development"
     },
     {
       "id": "grit",
@@ -451,16 +431,14 @@ window.SITE = {
       "title": "The Obstacle Is the Way",
       "author": "Ryan Holiday",
       "status": "read",
-      "topic": "Philosophy",
-      "titleAr": "العقبة هي الطريق"
+      "topic": "Philosophy"
     },
     {
       "id": "meditations",
       "title": "Meditations",
       "author": "Marcus Aurelius",
       "status": "read",
-      "topic": "Philosophy",
-      "titleAr": "التأملات"
+      "topic": "Philosophy"
     }
   ],
   "certificates": [
