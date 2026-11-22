@@ -203,10 +203,6 @@ window.SITE = {
   ],
   "books": [
     {
-      "id": "book-mwrb1m4o",
-      "status": "read"
-    },
-    {
       "id": "i-hate-you-dont-leave-me",
       "title": "I Hate You, Don't Leave Me",
       "author": "Jerold J. Kreisman and Hal Straus",
