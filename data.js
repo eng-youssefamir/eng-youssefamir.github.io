@@ -85,92 +85,171 @@ window.SITE = {
   },
   "path": [
     {
-      "name": "Foundation",
+      "name": "Junior Linux Systems Administrator",
       "status": "in-progress",
-      "summary": "The layer every platform sits on.",
+      "summary": "Provision, harden, and automate Linux servers and core networking using Bash and Python to ensure reliable, secure infrastructure operations.",
       "items": [
         {
-          "t": "Linux administration",
+          "t": "Linux Administration",
           "s": "in-progress"
         },
         {
-          "t": "Networking fundamentals",
-          "s": "done"
-        },
-        {
-          "t": "Git",
+          "t": "Git & GitHub",
           "s": "next"
         },
         {
-          "t": "Python for automation",
+          "t": "Bash Scripting",
           "s": "next"
+        },
+        {
+          "t": "Networking Fundamentals",
+          "s": "in-progress"
+        },
+        {
+          "t": "Core Network Protocols",
+          "s": "later"
+        },
+        {
+          "t": "Packet Analysis Lab",
+          "s": "later"
+        },
+        {
+          "t": "Python for Automation",
+          "s": "later"
+        },
+        {
+          "t": "Linux Hardening",
+          "s": "later"
         }
       ]
     },
     {
-      "name": "Containers and cloud",
+      "name": "Junior Cloud & DevOps Engineer",
       "status": "next",
-      "summary": "The gateway to a first job.",
+      "summary": "Automate application delivery and reproducible AWS infrastructure using Docker, Terraform, Ansible, and secure CI/CD pipelines.",
       "items": [
         {
-          "t": "Docker and containers"
+          "t": "Docker"
         },
         {
-          "t": "Cloud fundamentals"
+          "t": "PostgreSQL Administration"
         },
         {
-          "t": "PostgreSQL"
+          "t": "AWS"
         },
         {
-          "t": "Infrastructure as code with Terraform"
+          "t": "Terraform"
+        },
+        {
+          "t": "Ansible"
+        },
+        {
+          "t": "CI/CD & Pipeline Security"
+        },
+        {
+          "t": "Observability Basics"
         }
       ]
     },
     {
-      "name": "Kubernetes and platforms",
+      "name": "Mid-Level Kubernetes & Site Reliability Engineer (SRE)",
       "status": "later",
-      "summary": "Running and securing workloads at scale.",
+      "summary": "Architect and secure production Kubernetes clusters with GitOps, policy-as-code, and full-stack observability to maximize system reliability (SLI/SLO).",
       "items": [
         {
-          "t": "Kubernetes core"
+          "t": "Kubernetes Core"
         },
         {
-          "t": "Kubernetes security"
+          "t": "Helm & Kustomize"
         },
         {
-          "t": "SRE foundations"
+          "t": "GitOps"
+        },
+        {
+          "t": "Secrets Management"
+        },
+        {
+          "t": "PKI & TLS in Practice"
+        },
+        {
+          "t": "Full Observability "
+        },
+        {
+          "t": "SRE Foundations"
+        },
+        {
+          "t": "Kubernetes Security "
         }
       ]
     },
     {
-      "name": "Senior level",
+      "name": "Senior Platform Engineer",
       "status": "later",
-      "summary": "Depth in the systems platforms are built from.",
+      "summary": "Build self-service Internal Developer Platforms (IDPs) using custom Go Operators, Crossplane, eBPF networking, and FinOps practices at scale.",
       "items": [
+        {
+          "t": "Cloud Security & IAM"
+        },
+        {
+          "t": "Disaster Recovery & Reliability"
+        },
         {
           "t": "Go"
         },
         {
-          "t": "Identity: PKI and OIDC"
+          "t": "Crossplane & Operators"
         },
         {
-          "t": "Internal developer platforms"
+          "t": "Identity (OAuth2 / OIDC)"
+        },
+        {
+          "t": "Platform Engineering"
+        },
+        {
+          "t": "Platform as a Product"
+        },
+        {
+          "t": "Cilium"
+        },
+        {
+          "t": "FinOps"
+        },
+        {
+          "t": "Second Cloud (Azure)"
+        },
+        {
+          "t": "System Design"
         }
       ]
     },
     {
-      "name": "Specializations",
+      "name": "Infrastructure Specialist (On-Demand Tracks)",
       "status": "later",
-      "summary": "Optional, chosen by the roles I end up in.",
+      "summary": "Engineer high-availability enterprise networks, bare-metal virtualization, and fault-tolerant storage or database systems for mission-critical workloads.",
       "items": [
         {
-          "t": "Enterprise networking"
+          "t": "Enterprise Networking"
         },
         {
-          "t": "Virtualization and storage"
+          "t": "Edge Security"
         },
         {
-          "t": "eBPF and service mesh"
+          "t": "Virtualization"
+        },
+        {
+          "t": "Storage"
+        },
+        {
+          "t": "Bare Metal & Immutable Infra"
+        },
+        {
+          "t": "PostgreSQL HA"
+        },
+        {
+          "t": "Deep eBPF & Istio"
+        },
+        {
+          "t": "Network Automation "
         }
       ]
     }
