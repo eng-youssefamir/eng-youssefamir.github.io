@@ -444,6 +444,14 @@ window.SITE = {
   ],
   "certificates": [
     {
+      "title": "Foundations of Cybersecurity",
+      "issuer": "Coursera",
+      "date": "Apr 20, 2026",
+      "type": "Course certificate",
+      "detail": "10 Hours",
+      "verify": "https://coursera.org/share/f3f4532d5ca22b5e73d4fd7980ca1e76"
+    },
+    {
       "title": "RHCSA 10 complete bootcamp - Arabic",
       "issuer": "Udemy",
       "date": "Sept. 5, 2026",
