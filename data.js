@@ -5,7 +5,7 @@ window.SITE = {
   "initials": "YA",
   "role": "Platform Engineer in the making",
   "availability": "Open to entry-level and remote roles in platform, infrastructure, and DevOps.",
-  "email": "youssefamirabdelhamid@gmail.com",
+  "email": "eng.youssefamir@gmail.com",
   "location": "Egypt",
   "photo": "photo.jpg",
   "links": {
