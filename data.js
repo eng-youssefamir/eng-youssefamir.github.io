@@ -216,7 +216,8 @@ window.SITE = {
       "author": "Brian Ward",
       "status": "reading",
       "topic": "Linux",
-      "note": "The companion book to my RHCSA study."
+      "note": "The companion book to my RHCSA study.",
+      "cover": "covers/how-linux-works.jpg?v=1795333883584"
     },
     {
       "id": "thinking-fast-and-slow",
