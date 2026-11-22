@@ -444,6 +444,15 @@ window.SITE = {
   ],
   "certificates": [
     {
+      "title": "RHCSA 10 complete bootcamp - Arabic",
+      "issuer": "Udemy",
+      "date": "Sept. 5, 2026",
+      "type": "Course certificate",
+      "detail": "Instructors Ahmed Elfakharany : 19.5 total hours",
+      "id": "UC-2edbb002-f762-489a-878f-45116e366bf9",
+      "verify": "ude.my/UC-2edbb002-f762-489a-878f-45116e366bf9"
+    },
+    {
       "title": "Introduction to Computer Networking, Beginner Crash Course",
       "issuer": "Udemy",
       "detail": "Instructor: Rick Crisci. 7 hours.",
