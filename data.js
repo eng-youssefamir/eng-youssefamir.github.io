@@ -3,7 +3,7 @@ window.SITE = {
   "url": "https://eng-youssefamir.github.io",
   "name": "Youssef Amir",
   "initials": "YA",
-  "role": "Platform Engineer in the making",
+  "role": "Platform Engineer",
   "availability": "Open to entry-level and remote roles in platform, infrastructure, and DevOps.",
   "email": "youssefamirabdelhamid@gmail.com",
   "location": "Egypt",
@@ -11,9 +11,7 @@ window.SITE = {
   "links": {
     "linkedin": "https://linkedin.com/in/youssef-amir-219a26379",
     "github": "https://github.com/eng-youssefamir",
-    "blog": "https://lam-tokhlaq.blogspot.com",
-    "youtube": "",
-    "community": ""
+    "blog": "https://lam-tokhlaq.blogspot.com"
   },
   "hero": {
     "hello": "Hi, I'm Youssef Amir.",
