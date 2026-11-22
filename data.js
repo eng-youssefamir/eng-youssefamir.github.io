@@ -22,9 +22,7 @@ window.SITE = {
   "about": {
     "lead": "A writer who is training to become a Platform Engineer.",
     "paragraphs": [
-      "I'm a writer and academic researcher with a strong creative and productive drive. I write in Arabic about psychology, philosophy, and self-development, and I break down the books behind those ideas.",
-      "Alongside that, I'm training to become a Platform Engineer. I'm studying Business Information Systems and building the Linux, networking, and automation skills that infrastructure teams rely on. The goal is to work remotely with international teams.",
-      "The two sides share a habit: take something complicated, understand how it works, and explain it clearly. I like clear systems, careful documentation, and things simple enough to maintain."
+      "I'm a writer and academic researcher with a strong creative and productive drive. I write in Arabic about psychology, philosophy, and self-development, and I break down the books behind those ideas.\nAlongside that, I'm training to become a Platform Engineer. I'm studying Business Information Systems and building the Linux, networking, and automation skills that infrastructure teams rely on. The goal is to work remotely with international teams.\nThe two sides share a habit: take something complicated, understand how it works, and explain it clearly. I like clear systems, careful documentation, and things simple enough to maintain."
     ]
   },
   "focus": [
