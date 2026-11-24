@@ -284,7 +284,7 @@ window.SITE = {
       "id": "i-hate-you-dont-leave-me",
       "title": "I Hate You, Don't Leave Me",
       "author": "Jerold J. Kreisman and Hal Straus",
-      "status": "reading",
+      "status": "read",
       "topic": "Psychology",
       "rating": 3
     },
