@@ -285,7 +285,8 @@ window.SITE = {
       "title": "I Hate You, Don't Leave Me",
       "author": "Jerold J. Kreisman and Hal Straus",
       "status": "reading",
-      "topic": "Psychology"
+      "topic": "Psychology",
+      "rating": 3
     },
     {
       "id": "how-linux-works",
