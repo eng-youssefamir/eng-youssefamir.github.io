@@ -577,15 +577,6 @@ window.SITE = {
   ],
   "skills": [
     {
-      "group": "Platform and infrastructure",
-      "items": [
-        "Linux fundamentals",
-        "Networking fundamentals",
-        "Python",
-        "C++ fundamentals"
-      ]
-    },
-    {
       "group": "Writing",
       "items": [
         "Copywriting",
@@ -635,5 +626,45 @@ window.SITE = {
   "cv": {
     "headline": "Platform and Infrastructure Engineer, entry level",
     "objective": "Business Information Systems student with CompTIA A+ training and solid foundations in C++, Python, and computer networking. Passionate about IT infrastructure, Linux systems, and automation, aspiring to become a Platform and Infrastructure Engineer. Seeking entry-level opportunities in infrastructure, DevOps, and IT operations teams to apply technical knowledge, problem-solving, and adaptability in real-world environments."
-  }
+  },
+  "services": [
+    {
+      "title": "كتابة الكتب بالنيابة",
+      "lang": "ar",
+      "summary": "أحوّل فكرتك وخبرتك إلى كتاب مكتوب بصوتك، من التخطيط والهيكلة حتى المسودة النهائية.",
+      "points": [
+        "تخطيط الكتاب وهيكلة الفصول",
+        "كتابة المسودات بأسلوبك وصوتك",
+        "مراجعة وتحرير حتى النسخة النهائية",
+        "سرية كاملة للعمل وللعميل"
+      ],
+      "note": "السعر يعتمد على حجم الكتاب وتفاصيله. راسلني بفكرتك أولاً.",
+      "ctaLabel": "اسأل عن هذه الخدمة"
+    },
+    {
+      "title": "كتابة المحتوى والمقالات",
+      "lang": "ar",
+      "summary": "نصوص واضحة تصل إلى قارئها، للمواقع والمدونات والحملات.",
+      "points": [
+        "مقالات ومحتوى للمدونات والمواقع",
+        "نصوص تسويقية وإعلانية",
+        "ملخصات كتب وسكربتات فيديو"
+      ],
+      "note": "أخبرني عن جمهورك وهدفك وسأقترح عليك الشكل المناسب.",
+      "ctaLabel": "اسأل عن هذه الخدمة"
+    },
+    {
+      "title": "البحث وكتابة المقالات",
+      "lang": "ar",
+      "summary": "مقالات وأبحاث مبسّطة تربط الفكرة بمصادرها وأدلتها بلغة سهلة.",
+      "points": [
+        "جمع المصادر وتلخيصها",
+        "كتابة مقالات بحثية واضحة",
+        "تنسيق المراجع والاقتباسات"
+      ],
+      "note": "يُحدَّد النطاق والموعد بعد أن تشرح لي حاجتك.",
+      "ctaLabel": "اسأل عن هذه الخدمة"
+    }
+  ],
+  "log": []
 };
