@@ -681,5 +681,8 @@ window.SITE = {
       "ctaLabel": "اطلب استشارة أولية"
     }
   ],
-  "log": []
+  "log": [],
+  "analytics": {
+    "goatcounter": "youssefamir"
+  }
 };
