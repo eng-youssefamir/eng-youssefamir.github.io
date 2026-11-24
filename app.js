@@ -7,17 +7,22 @@
   // The admin panel drops empty fields, so give every section a safe default.
   ['links', 'hero', 'about', 'cv', 'now'].forEach(function (k) { S[k] = S[k] || {}; });
   ['books', 'certificates', 'education', 'experience', 'skills', 'languages', 'interests', 'path', 'method',
-    'labs', 'projects', 'labEnvironment', 'focus', 'howIWork', 'confidential'].forEach(function (k) { S[k] = S[k] || []; });
+    'labs', 'projects', 'quotes', 'labEnvironment', 'focus', 'howIWork', 'confidential'].forEach(function (k) { S[k] = S[k] || []; });
+  var DEF = window.SITE_DEFAULTS || {};
+  if (S.services === undefined) S.services = DEF.services || [];
+  S.log = S.log || [];
+  S.analytics = S.analytics || {};
   S.now.console = S.now.console || [];
   S.links.blog = S.links.blog || 'https://lam-tokhlaq.blogspot.com';
   S.initials = S.initials || 'YA';
 
   var NAV = [
-    ['Home', 'index'], ['About', 'about'], ['Work', 'projects'], ['Library', 'library'],
-    ['Blog', 'blog'], ['Certificates', 'certificates'], ['Community', 'community'], ['Contact', 'contact']
+    ['Home', 'index'], ['About', 'about'], ['Work', 'projects'], ['Log', 'log'], ['Services', 'services'],
+    ['Library', 'library'], ['Blog', 'blog'], ['Certificates', 'certificates'], ['Contact', 'contact']
   ];
 
   var ICON = {
+    search: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>',
     theme: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>',
     menu: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>'
   };
@@ -25,7 +30,7 @@
   var STATE = { 'done': 'Done', 'in-progress': 'In progress', 'next': 'Next', 'later': 'Later' };
   var BOOK_STATUS = { reading: 'Reading', read: 'Read', next: 'Up next' };
   var COVER_COLORS = ['#7B1E36', '#1F4FD1', '#0B7A75', '#B85C12', '#6B3FB8', '#C2307F', '#1F8A5F', '#222B33', '#8A5A2B', '#0E86B0'];
-  var PAGE_COLORS = { index: '#7B1E36', about: '#0B7A75', projects: '#2B55D6', library: '#B85C12', blog: '#6B3FB8', certificates: '#1F8A5F', community: '#C2307F', contact: '#0E86B0' };
+  var PAGE_COLORS = { index: '#7B1E36', about: '#0B7A75', projects: '#2B55D6', library: '#B85C12', blog: '#6B3FB8', certificates: '#1F8A5F', community: '#C2307F', contact: '#0E86B0', log: '#D1435B', services: '#9A6B00' };
 
   /* ---------- helpers ---------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -48,8 +53,10 @@
       else el.setAttribute(k, v === true ? '' : v);
     });
     for (var i = 2; i < arguments.length; i++) add(el, arguments[i]);
+    if (!el.children.length && !el.hasAttribute('dir') && AR.test(el.textContent)) el.setAttribute('dir', 'auto');
     return el;
   }
+  var AR = /[\u0600-\u06FF]/;
 
   function ext(href) { return { href: href, target: '_blank', rel: 'noopener' }; }
 
@@ -102,7 +109,9 @@
       }
     });
     menuBtn.innerHTML = ICON.menu;
-    host.append(h('div', { class: 'wrap bar' }, brand, nav, h('div', { class: 'bar-tools' }, themeBtn, menuBtn)));
+    var searchBtn = h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Search the site (press Ctrl+K)', title: 'Search (Ctrl+K)', onclick: function () { palette(); } });
+    searchBtn.innerHTML = ICON.search;
+    host.append(h('div', { class: 'wrap bar' }, brand, nav, h('div', { class: 'bar-tools' }, searchBtn, themeBtn, menuBtn)));
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && host.classList.contains('open')) {
         host.classList.remove('open');
@@ -117,14 +126,17 @@
     if (!host) return;
     var L = S.links;
     var links = [['Blog', L.blog], ['LinkedIn', L.linkedin], ['GitHub', L.github]];
+    var internal = [['Community', 'community.html'], ['Résumé', 'cv.html']];
     if (L.youtube) links.push(['YouTube', L.youtube]);
     host.append(h('div', { class: 'wrap foot' },
       h('div', {},
         h('p', { class: 'foot-name', text: S.name }),
         h('p', { class: 'muted', text: S.role + '. ' + S.location + '.' })),
-      h('ul', { class: 'foot-links' }, links.map(function (l) {
+      h('ul', { class: 'foot-links' }, internal.map(function (l) {
+        return h('li', {}, h('a', { href: l[1], text: l[0] }));
+      }).concat(links.map(function (l) {
         return h('li', {}, h('a', ext(l[1]), l[0]));
-      })),
+      }))),
       h('p', { class: 'muted foot-note' },
         '© ' + new Date().getFullYear() + ' ' + S.name + '. Written by hand and hosted free on GitHub Pages.')));
   }
@@ -316,6 +328,9 @@
       });
     }
     renderStats($('#stats'));
+    renderSpark($('#spark'));
+    var lw = $('#log-home-wrap');
+    if (lw && S.log.length) { lw.hidden = false; renderLog($('#log-home'), 3); }
     renderPosts($('#latest-posts'), 3);
     renderConsole($('#console'));
     renderCredsCompact($('#creds'));
@@ -396,22 +411,84 @@
     renderProjects($('#projects-list'));
   };
 
-  function bookCard(b) {
-    var parts = [];
-    var el = h('article', { class: 'book' }, cover(b));
-    el.append(h('h3', { text: b.title }));
-    el.append(h('p', { class: 'muted by', text: b.author }));
+  function bookCard(b, list, i) {
+    function open() { bookDialog(list || [b], list ? i : 0); }
+    var cv = h('button', { class: 'cover-btn', type: 'button', 'aria-label': 'Open details for ' + b.title, onclick: open }, cover(b));
+    var el = h('article', { class: 'book' }, cv);
+    el.append(h('h3', {}, h('button', { class: 'title-btn', type: 'button', dir: 'auto', onclick: open, text: b.title })));
+    el.append(h('p', { class: 'muted by', dir: 'auto', text: b.author }));
     el.append(h('p', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small topic', style: '--tc:' + COVER_COLORS[hash(b.topic) % COVER_COLORS.length], text: b.topic }) : null));
     if (b.rating) el.append(h('p', { class: 'stars', 'aria-label': 'Rated ' + b.rating + ' out of 5', text: '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) }));
-    if (b.takeaway) el.append(h('p', { class: 'takeaway', text: b.takeaway }));
-    if (b.note) el.append(h('p', { class: 'small', text: b.note }));
+    var blurb = b.takeaway || b.note;
+    if (blurb) el.append(h('p', { class: 'takeaway', dir: 'auto', text: blurb.length > 130 ? blurb.slice(0, 127).trim() + '…' : blurb }));
+    el.append(h('button', { class: 'textlink small more-btn', type: 'button', onclick: open }, 'Details'));
     if (b.series) el.append(h('a', Object.assign({ class: 'textlink small' }, ext(blogSearch(b.series.title))), 'Read the series'));
     return el;
   }
 
+  function bookDialog(list, start) {
+    var i = start, last = document.activeElement;
+    var body = h('div', { class: 'bk-body' });
+    var prev = h('button', { class: 'bk-nav bk-prev', type: 'button', 'aria-label': 'Previous book', onclick: function () { go(-1); } }, '‹');
+    var next = h('button', { class: 'bk-nav bk-next', type: 'button', 'aria-label': 'Next book', onclick: function () { go(1); } }, '›');
+    var close = h('button', { class: 'bk-close', type: 'button', 'aria-label': 'Close', onclick: shut }, '✕');
+    var panel = h('div', { class: 'bk', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Book details' }, close, body);
+    var wrap = h('div', { class: 'bk-wrap' }, prev, panel, next);
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) shut(); });
+    function paras(t) { return String(t || '').split(/\n\s*\n/).filter(Boolean); }
+    function show() {
+      var b = list[i];
+      body.textContent = '';
+      var info = h('div', { class: 'bk-info' },
+        h('div', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small topic', style: '--tc:' + COVER_COLORS[hash(b.topic) % COVER_COLORS.length], text: b.topic }) : null),
+        h('h2', { dir: 'auto', text: b.title }),
+        h('p', { class: 'muted', dir: 'auto', text: b.author }));
+      if (b.rating) info.append(h('p', { class: 'stars', 'aria-label': 'Rated ' + b.rating + ' out of 5', text: '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) }));
+      paras(b.description).forEach(function (t) { info.append(h('p', { dir: 'auto', text: t })); });
+      if (b.takeaway) info.append(h('blockquote', { class: 'bk-take', dir: 'auto' }, h('strong', { text: 'What I took from it' }), h('span', { text: b.takeaway })));
+      if (b.note) info.append(h('p', { class: 'small muted', dir: 'auto', text: b.note }));
+      if (!b.description && !b.takeaway && !b.note) info.append(h('p', { class: 'muted', text: b.status === 'next' ? 'On the list. Notes will appear here once I start it.' : 'No notes written for this book yet.' }));
+      if (b.series) {
+        var sr = b.series, pct = sr.parts ? Math.min(100, Math.round((sr.done || 0) / sr.parts * 100)) : 0;
+        var box = h('div', { class: 'bk-series' }, h('strong', { dir: 'auto', text: sr.title }));
+        if (sr.parts) {
+          var tr = h('div', { class: 'bar-track light' }, h('span', { class: 'bar-fill' }));
+          tr.firstChild.style.setProperty('--w', pct + '%');
+          box.append(h('span', { class: 'muted small', text: (sr.done || 0) + ' of ' + sr.parts + ' articles written' }), tr);
+        }
+        box.append(h('a', Object.assign({ class: 'btn btn-primary btn-sm' }, ext(blogSearch(sr.title))), 'Read the series on the blog'));
+        info.append(box);
+      }
+      body.append(h('div', { class: 'bk-cover' }, cover(b)), info);
+      prev.hidden = next.hidden = list.length < 2;
+    }
+    function go(d) { i = (i + d + list.length) % list.length; show(); }
+    function key(e) {
+      if (e.key === 'Escape') shut();
+      else if (e.key === 'ArrowRight') go(1);
+      else if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'Tab') {
+        var f = wrap.querySelectorAll('button:not([hidden]), a[href]');
+        if (!f.length) return;
+        var first = f[0], lastEl = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
+        else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus(); }
+      }
+    }
+    function shut() {
+      document.removeEventListener('keydown', key);
+      wrap.remove(); document.body.classList.remove('noscroll');
+      if (last && last.focus) last.focus();
+    }
+    document.addEventListener('keydown', key);
+    document.body.append(wrap); document.body.classList.add('noscroll');
+    show(); close.focus();
+  }
+
   PAGES.library = function () {
     var grid = $('#shelf'), chips = $('#chips'), q = $('#q'), empty = $('#empty'), count = $('#count');
-    var state = { status: 'all', q: '' };
+    var state = { status: 'all', q: (new URLSearchParams(location.search).get('q') || '') };
+    q.value = state.q;
     var order = ['all', 'reading', 'read', 'next'];
     var labels = { all: 'All', reading: 'Reading', read: 'Read', next: 'Up next' };
     function n(s) { return s === 'all' ? S.books.length : S.books.filter(function (b) { return b.status === s; }).length; }
@@ -430,10 +507,10 @@
       var list = S.books.filter(function (b) {
         if (state.status !== 'all' && b.status !== state.status) return false;
         if (!term) return true;
-        return [b.title, b.author, b.topic].join(' ').toLowerCase().indexOf(term) !== -1;
+        return [b.title, b.author, b.topic, b.description].join(' ').toLowerCase().indexOf(term) !== -1;
       });
       grid.textContent = '';
-      list.forEach(function (b) { grid.append(bookCard(b)); });
+      list.forEach(function (b, k) { grid.append(bookCard(b, list, k)); });
       empty.hidden = list.length > 0;
       count.textContent = list.length + (list.length === 1 ? ' book' : ' books');
     }
@@ -542,6 +619,7 @@
       }))),
       sec('Languages', h('p', { text: S.languages.map(function (l) { return l.name + ' (' + l.level + ')'; }).join(', ') })),
       sec('Interests', h('p', { text: S.interests.join(' | ') })));
+    if (location.hash === '#pdf') setTimeout(function () { window.print(); }, 700);
     var btn = $('#print-cv');
     if (btn) btn.addEventListener('click', function () { window.print(); });
   };
@@ -735,11 +813,190 @@
     });
   }
 
+  /* ---------- daily reminder, next step, search palette, scroll bar ---------- */
+  var QUOTES = [
+    'Small steps, kept daily, build the person you haven’t met yet.',
+    'You don’t need to feel ready. You need to open the terminal.',
+    'Every expert once typed a first command and didn’t understand the output.',
+    'Consistency is quiet. It still wins.',
+    'Finish the boring part. That is where the skill lives.',
+    'One hour today beats ten hours someday.',
+    'Read to understand. Build to remember.',
+    'Progress you can show beats plans you can describe.',
+    'Be patient with the learner and strict with the schedule.',
+    'The path is long because it is worth walking.',
+    'أنت لم تُخلق بعد بالكامل، وما تفعله اليوم يُكمل صنعك.'
+  ];
+
+  function nextStep() {
+    var found = null;
+    ['in-progress', 'next'].some(function (st) {
+      return S.path.some(function (ph) {
+        return (ph.items || []).some(function (t) { if (t.s === st) { found = { topic: t.t, phase: ph.name, state: st }; return true; } return false; });
+      });
+    });
+    return found;
+  }
+
+  function renderSpark(el) {
+    if (!el) return;
+    var pool = (S.quotes || []).filter(Boolean);
+    if (!pool.length) pool = QUOTES;
+    var day = Math.floor(Date.now() / 86400000), k = day % pool.length;
+    var text = h('p', { class: 'spark-q', dir: 'auto', text: pool[k] });
+    var again = h('button', { class: 'textlink small', type: 'button', onclick: function () {
+      k = (k + 1) % pool.length; text.textContent = pool[k];
+    } }, 'Another one');
+    el.append(h('div', { class: 'spark-card spark-quote' }, h('h3', { text: 'Today’s reminder' }), text, again));
+    var n = nextStep();
+    if (n) {
+      el.append(h('a', { class: 'spark-card spark-next', href: 'projects.html' },
+        h('h3', { text: n.state === 'in-progress' ? 'Studying now' : 'Next on the path' }),
+        h('p', { class: 'spark-topic', text: n.topic }),
+        h('p', { class: 'small', text: n.phase + '. See the full roadmap.' })));
+    }
+  }
+
+  function palette() {
+    if ($('.pal')) return;
+    var last = document.activeElement, sel = 0, shown = [];
+    var items = NAV.map(function (n) { return { label: n[0], hint: 'Page', href: n[1] === 'index' ? 'index.html' : n[1] + '.html' }; });
+    items.push({ label: 'CV', hint: 'Page', href: 'cv.html' }, { label: 'Community', hint: 'Page', href: 'community.html' });
+    S.books.forEach(function (b) { items.push({ label: b.title, hint: 'Book, ' + (b.author || ''), href: 'library.html?q=' + encodeURIComponent(b.title), text: [b.title, b.author, b.topic].join(' ') }); });
+    S.projects.forEach(function (p) { items.push({ label: p.title, hint: 'Project', href: 'projects.html' }); });
+    S.certificates.forEach(function (c) { items.push({ label: c.title, hint: 'Certificate', href: 'certificates.html' }); });
+    var input = h('input', { class: 'pal-in', type: 'search', placeholder: 'Search pages, books, projects', 'aria-label': 'Search the site', autocomplete: 'off', dir: 'auto' });
+    var list = h('ul', { class: 'pal-list', role: 'listbox' });
+    var box = h('div', { class: 'pal-box', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Search' }, input, list,
+      h('p', { class: 'pal-foot muted small', text: 'Enter to open. Esc to close.' }));
+    var wrap = h('div', { class: 'pal' }, box);
+    function paint() {
+      var q = input.value.trim().toLowerCase();
+      shown = items.filter(function (it) { return !q || (it.text || it.label).toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+      sel = Math.min(sel, Math.max(0, shown.length - 1));
+      list.textContent = '';
+      if (!shown.length) list.append(h('li', { class: 'pal-empty muted', text: 'Nothing matches. Try another word.' }));
+      shown.forEach(function (it, i) {
+        list.append(h('li', { role: 'option', 'aria-selected': String(i === sel), class: i === sel ? 'on' : '', onclick: function () { go(it); }, onmousemove: function () { sel = i; paint(); } },
+          h('span', { dir: 'auto', text: it.label }), h('span', { class: 'muted small', text: it.hint })));
+      });
+    }
+    function go(it) { shut(); location.href = it.href; }
+    function key(e) {
+      if (e.key === 'Escape') { shut(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(shown.length - 1, sel + 1); paint(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, sel - 1); paint(); }
+      else if (e.key === 'Enter' && shown[sel]) { e.preventDefault(); go(shown[sel]); }
+    }
+    function shut() { document.removeEventListener('keydown', key); wrap.remove(); document.body.classList.remove('noscroll'); if (last && last.focus) last.focus(); }
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) shut(); });
+    input.addEventListener('input', function () { sel = 0; paint(); });
+    document.addEventListener('keydown', key);
+    document.body.append(wrap); document.body.classList.add('noscroll');
+    paint(); input.focus();
+  }
+
+  function shortcuts() {
+    document.addEventListener('keydown', function (e) {
+      var tag = (e.target.tagName || '').toLowerCase();
+      var typing = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); }
+      else if (e.key === '/' && !typing && !e.ctrlKey && !e.metaKey) { e.preventDefault(); palette(); }
+    });
+    var bar = h('div', { class: 'scrollbar', 'aria-hidden': 'true' });
+    document.body.append(bar);
+    var tick = false;
+    function upd() {
+      var max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, scrollY / max) : 0) + ')';
+      tick = false;
+    }
+    addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+    upd();
+  }
+
+  /* ---------- learning log and services ---------- */
+  function sortedLog() {
+    return S.log.filter(function (e) { return e && (e.title || e.text); }).slice().sort(function (a, b) {
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+  }
+
+  function renderLog(el, limit) {
+    if (!el) return;
+    var list = sortedLog();
+    if (limit) list = list.slice(0, limit);
+    if (!list.length) {
+      el.append(h('div', { class: 'empty' },
+        h('p', { class: 'empty-title', text: 'The first entry is coming.' }),
+        h('p', { text: 'I will log what I study and build here, with dates, as I go.' })));
+      return;
+    }
+    var month = '';
+    list.forEach(function (e) {
+      var d = e.date ? new Date(e.date) : null;
+      var m = d && !isNaN(d) ? new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(d) : '';
+      if (!limit && m && m !== month) { month = m; el.append(h('h2', { class: 'log-month', text: m })); }
+      var item = h('article', { class: 'log-item' },
+        h('time', { datetime: e.date || null, text: e.date ? fmtDate(e.date) : '' }),
+        h('h3', { text: e.title || '' }));
+      String(e.text || '').split(/\n\s*\n/).filter(Boolean).forEach(function (t) { item.append(h('p', { text: t })); });
+      if ((e.tags || []).length) item.append(h('ul', { class: 'tags' }, e.tags.map(function (t) { return h('li', { text: t }); })));
+      if (e.link && /^https?:\/\//i.test(e.link)) item.append(h('p', {}, h('a', Object.assign({ class: 'textlink small' }, ext(e.link)), 'See the work')));
+      el.append(item);
+    });
+  }
+
+  PAGES.log = function () {
+    renderLog($('#log'));
+    var sum = $('#log-summary'), list = sortedLog();
+    if (sum && list.length) sum.textContent = list.length + (list.length === 1 ? ' entry' : ' entries') + '. Last update: ' + (list[0].date ? fmtDate(list[0].date) : 'recently') + '.';
+  };
+
+  PAGES.services = function () {
+    var host = $('#services');
+    var mail = $('#svc-mail');
+    if (mail && S.email) mail.href = 'mailto:' + S.email + '?subject=' + encodeURIComponent('Working together');
+    if (!host) return;
+    var list = S.services.filter(function (v) { return v && v.title; });
+    if (!list.length) {
+      host.append(h('div', { class: 'empty' },
+        h('p', { class: 'empty-title', text: 'Services will be listed here soon.' }),
+        h('p', { text: 'In the meantime, write to me with what you need.' }),
+        h('a', { class: 'btn btn-ghost', href: 'contact.html' }, 'Contact')));
+      return;
+    }
+    list.forEach(function (v, i) {
+      var ar = v.lang === 'ar';
+      var card = h('article', { class: 'service' + (ar ? ' is-ar' : ''), lang: ar ? 'ar' : 'en', dir: ar ? 'rtl' : 'ltr' });
+      card.style.setProperty('--sc', COVER_COLORS[i % COVER_COLORS.length]);
+      card.append(h('h3', { text: v.title }));
+      if (v.summary) card.append(h('p', { class: 'svc-sum', text: v.summary }));
+      if ((v.points || []).length) card.append(h('ul', { class: 'svc-points' }, v.points.map(function (t) { return h('li', { text: t }); })));
+      if (v.note) card.append(h('p', { class: 'svc-note muted', text: v.note }));
+      var href = v.link && /^(https?:\/\/|mailto:)/i.test(v.link) ? v.link
+        : (S.email ? 'mailto:' + S.email + '?subject=' + encodeURIComponent(v.title) : 'contact.html');
+      card.append(h('p', { class: 'actions' }, h('a', Object.assign({ class: 'btn btn-primary btn-sm' }, /^https?:/i.test(href) ? ext(href) : { href: href }), v.ctaLabel || (ar ? 'اسأل عن هذه الخدمة' : 'Ask about this'))));
+      host.append(card);
+    });
+  };
+
+  /* ---------- optional visitor counter (GoatCounter, no cookies) ---------- */
+  function analytics() {
+    var code = String((S.analytics && S.analytics.goatcounter) || '').trim();
+    if (!/^[a-z0-9-]{2,40}$/.test(code) || location.protocol === 'file:' || /^(localhost|127\.)/.test(location.hostname)) return;
+    var sc = document.createElement('script');
+    sc.async = true;
+    sc.src = 'https://gc.zgo.at/count.js';
+    sc.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count');
+    document.head.append(sc);
+  }
+
   /* ---------- boot ---------- */
   function bind() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-bind]'), function (el) {
       var v = el.getAttribute('data-bind').split('.').reduce(function (o, k) { return o && o[k]; }, S);
-      if (typeof v === 'string' && v) el.textContent = v;
+      if (typeof v === 'string' && v) { el.textContent = v; if (AR.test(v)) el.setAttribute('dir', 'auto'); }
     });
   }
 
@@ -750,4 +1007,6 @@
   if (PAGES[page]) PAGES[page]();
   motion();
   pageLinks();
+  shortcuts();
+  analytics();
 })();

@@ -247,6 +247,9 @@
           { k: 'links.youtube', label: 'قناة YouTube', t: 'text', ltr: true, help: 'اتركه فارغاً حتى تُنشأ القناة. حين تضيفه يتحول زر صفحة المجتمع إلى "Watch on YouTube".' },
           { k: 'links.community', label: 'رابط المجتمع', t: 'text', ltr: true, help: 'اتركه فارغاً حتى يُفتح المجتمع. حين تضيفه يتحول الزر إلى "Join the community".' }
         ] },
+        { type: 'fields', title: 'إحصاءات الزوار (اختياري)', fields: [
+          { k: 'analytics.goatcounter', label: 'رمز GoatCounter', t: 'text', ltr: true, help: 'أنشئ حساباً مجانياً على goatcounter.com واختر اسماً (مثل youssefamir)، ثم اكتب هذا الاسم هنا فقط. يعرض لك عدد الزوار وبلدانهم دون ملفات تعريف ارتباط.' }
+        ] },
         { type: 'fields', title: 'السيرة الذاتية (صفحة CV)', fields: [
           { k: 'cv.headline', label: 'العنوان تحت اسمك', t: 'text', wide: true },
           { k: 'cv.objective', label: 'الهدف المهني', t: 'textarea', rows: 6, wide: true }
@@ -262,6 +265,9 @@
           { k: 'hero.line1', label: 'السطر الأول من العنوان الكبير', t: 'text', wide: true },
           { k: 'hero.line2', label: 'السطر الثاني', t: 'text', wide: true },
           { k: 'hero.lead', label: 'الفقرة التعريفية', t: 'textarea', rows: 4, wide: true }
+        ] },
+        { type: 'fields', title: 'اقتباسات التحفيز', fields: [
+          { k: 'quotes', label: 'جمل تظهر في بطاقة "تذكير اليوم" (واحدة في كل سطر)', t: 'lines', rows: 7, wide: true, help: 'تتغير الجملة كل يوم. إن تركتها فارغة تظهر جمل افتراضية.' }
         ] },
         { type: 'list', title: 'ماذا أفعل (ثلاثة أقسام)', path: 'focus', newLabel: 'قسم جديد', addLabel: 'إضافة قسم',
           itemTitle: function (it) { return it.title; },
@@ -318,6 +324,7 @@
             { k: 'status', label: 'الحالة', t: 'select', options: BOOK_STATUS },
             { k: 'topic', label: 'الموضوع (مثل Psychology)', t: 'text', ltr: true },
             { k: 'rating', label: 'تقييمك', t: 'select', options: RATING, int: true },
+            { k: 'description', label: 'وصف الكتاب (يظهر عند الضغط على الكتاب. افصل الفقرات بسطر فارغ)', t: 'textarea', rows: 6, wide: true },
             { k: 'takeaway', label: 'أهم ما خرجت به (جملة أو جملتان)', t: 'textarea', rows: 3, wide: true },
             { k: 'note', label: 'ملاحظة قصيرة', t: 'text', wide: true },
             { k: 'cover', label: 'صورة الغلاف', t: 'cover', wide: true, help: 'اتركها فارغة ليبحث الموقع عن الغلاف تلقائياً، أو ارفع صورة غلافك بنفسك وستظهر بدل التلقائي.' },
@@ -383,6 +390,38 @@
             { k: 'period', label: 'المدة (مثل 2 years أو Jan 2027 to now)', t: 'text', ltr: true, wide: true },
             { k: 'points', label: 'ما فعلته (نقطة في كل سطر)', t: 'lines', rows: 5, wide: true }
           ], blank: function () { return { role: '', company: '', period: '', points: [] }; } }
+      ]
+    },
+    {
+      id: 'log', label: 'سجل التعلم',
+      intro: 'سطران كل أسبوع عمّا تعلمته وبنيته. الأحدث يظهر أولاً مرتباً بالتاريخ. اكتبه بالإنجليزية ليقرأه من يوظّفك.',
+      blocks: [
+        { type: 'list', title: 'المدخلات', path: 'log', newLabel: 'مدخل جديد', addLabel: 'إضافة مدخل', addTop: true, search: true,
+          itemTitle: function (it) { return it.title; }, itemMeta: function (it) { return it.date; },
+          fields: [
+            { k: 'date', label: 'التاريخ (مثل 2026-11-25)', t: 'text', ltr: true },
+            { k: 'title', label: 'العنوان', t: 'text', wide: true },
+            { k: 'text', label: 'ما تعلمته أو أنجزته (افصل الفقرات بسطر فارغ)', t: 'textarea', rows: 5, wide: true },
+            { k: 'tags', label: 'وسوم (واحد في كل سطر، مثل Linux)', t: 'lines', rows: 3, ltr: true },
+            { k: 'link', label: 'رابط للعمل (اختياري)', t: 'text', ltr: true }
+          ], blank: function () { return { date: new Date().toISOString().slice(0, 10), title: '', text: '' }; } }
+      ]
+    },
+    {
+      id: 'services', label: 'الخدمات',
+      intro: 'الخدمات التي تقدمها ونطاق عملك. اختر لغة كل خدمة، والخدمة العربية تُعرض بمحاذاة عربية كاملة. احذف أي خدمة لا تقدمها فعلاً.',
+      blocks: [
+        { type: 'list', title: 'قائمة الخدمات', path: 'services', newLabel: 'خدمة جديدة', addLabel: 'إضافة خدمة',
+          itemTitle: function (it) { return it.title; }, itemMeta: function (it) { return it.lang === 'ar' ? 'عربية' : 'English'; },
+          fields: [
+            { k: 'title', label: 'اسم الخدمة', t: 'text', wide: true },
+            { k: 'lang', label: 'لغة الخدمة', t: 'select', options: [['en', 'English'], ['ar', 'العربية']] },
+            { k: 'ctaLabel', label: 'نص الزر (اختياري)', t: 'text' },
+            { k: 'summary', label: 'وصف قصير', t: 'textarea', rows: 3, wide: true },
+            { k: 'points', label: 'ما تقدمه (نقطة في كل سطر)', t: 'lines', rows: 5, wide: true },
+            { k: 'note', label: 'ملاحظة (السعر أو طريقة العمل)', t: 'textarea', rows: 2, wide: true },
+            { k: 'link', label: 'رابط الزر (اختياري، وإلا فهو بريد إليك)', t: 'text', ltr: true, wide: true }
+          ], blank: function () { return { title: '', lang: 'ar', summary: '', points: [], note: '' }; } }
       ]
     },
     {
@@ -760,8 +799,13 @@
       sha = file.sha;
       data = parseDataJs(fromB64(file.content));
       snapshot = JSON.stringify(data);
+      var seeded = false, DEF = window.SITE_DEFAULTS || {};
+      Object.keys(DEF).forEach(function (k) {
+        if (data[k] === undefined) { data[k] = JSON.parse(JSON.stringify(DEF[k])); seeded = true; }
+      });
       keepToken(token, remember);
       openEditor();
+      if (seeded) { markDirty(); setState('أضفتُ أقساماً جديدة (الخدمات). راجعها ثم اضغط "حفظ التغييرات".', 'dirty'); }
     }).catch(function (e) {
       token = '';
       msgEl.className = 'msg';
