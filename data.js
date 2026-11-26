@@ -503,8 +503,8 @@ window.SITE = {
       "status": "read",
       "rating": 4,
       "description": "In Ego Is the Enemy, Ryan Holiday draws upon timeless Stoic philosophy and historical biographies to dismantle our greatest internal adversary: the ego. Structured around the three inevitable phases of any endeavor Aspiration, Success, and Failure the book serves as a practical manual for maintaining clarity, humility, and discipline. Holiday argues that unchecked ambition, self-absorption, and entitlement blind us to reality, prevent continuous learning, and sabotage long-term mastery. Rather than offering empty motivation, this work provides a sobering framework for staying grounded in purpose, detaching self-worth from external validation, and turning both triumph and defeat into fuel for genuine growth.",
-      "takeaway": "Ego disguises itself differently across aspiration, success, and failure, blinding you to reality and halting your growth when you need humility most. True mastery begins when you silence self-importance, stay a lifelong student, and let the work speak for itself.",
-      "note": "The book frames ego as a shifting adversary across aspiration, success, and failure, urging mastery over image yet at times treats ego as an absolute enemy, overlooking the line between unhealthy self-importance and the grounded self-confidence needed to stand firm and act decisively."
+      "takeaway": "Ego disguises itself differently across aspiration, success, and failure, blinding you to reality and halting your growth when you need humility most. True mastery begins when you silence vanity, stay a lifelong student, and let the work speak for itself.",
+      "note": "The book exposes how ego shifts masks across aspiration, success, and failure, urging mastery over image yet treating ego as an absolute enemy blurs the line between toxic vanity and the grounded self-confidence needed to act decisively."
     },
     {
       "id": "discipline-is-destiny",
