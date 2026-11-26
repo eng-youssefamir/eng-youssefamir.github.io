@@ -867,7 +867,8 @@ window.SITE = {
       "title": "The Snowball",
       "author": "Alice Schroeder",
       "topic": "Biography",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU1o_5NvdDRVBBTpEpoJEuneDjrxpnGiX8D-Do6GGwBg&s=10"
     },
     {
       "id": "ai-2041",
