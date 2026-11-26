@@ -33,5 +33,33 @@ window.SITE_DEFAULTS = {
       note: 'يُحدَّد النطاق والموعد بعد أن تشرح لي حاجتك.',
       ctaLabel: 'اسأل عن هذه الخدمة'
     }
-  ]
+  ],
+  community: {
+    status: 'soon',
+    lead: 'A private space for readers and builders: members-only articles and videos, guided learning, and a group where you can ask questions and get answers.',
+    perks: [
+      { title: 'Members-only writing', text: 'Articles and book breakdowns that go deeper than the public blog.' },
+      { title: 'Exclusive videos', text: 'Breakdowns and walkthroughs that are not published anywhere else.' },
+      { title: 'Courses and guided paths', text: 'Step-by-step learning, from platform engineering basics to clearer thinking and writing.' },
+      { title: 'A private group', text: 'Ask questions, share what you are building, and get feedback.' },
+      { title: 'First to know', text: 'Members get an email as soon as something new is published.' }
+    ],
+    plans: [
+      {
+        name: 'Member',
+        blurb: 'Full access to the community and everything published for members.',
+        currency: 'USD', priceMonth: '', priceYear: '', urlMonth: '', urlYear: '', featured: 'yes',
+        perks: ['Private group access', 'Members-only articles and videos', 'Courses and guided paths', 'Email when something new is published']
+      }
+    ],
+    support: [
+      { title: 'Support the work', text: 'Not ready to subscribe? You can support the writing and the videos with a one-time contribution. No account needed.', label: 'Support', url: '' }
+    ],
+    faq: [
+      { q: 'When does the community open?', a: 'Join the waitlist and you will get one email when the doors open.' },
+      { q: 'Do I need an account on this website?', a: 'No. The website stays open to everyone. Members get a separate account for the community space only.' },
+      { q: 'How does billing work?', a: 'You choose monthly or yearly. Prices are announced when the community opens.' },
+      { q: 'How will I know when something new is published?', a: 'Members get an email when new members-only content goes up.' }
+    ]
+  }
 };

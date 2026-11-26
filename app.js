@@ -10,6 +10,7 @@
     'labs', 'projects', 'quotes', 'labEnvironment', 'focus', 'howIWork', 'confidential'].forEach(function (k) { S[k] = S[k] || []; });
   var DEF = window.SITE_DEFAULTS || {};
   if (S.services === undefined) S.services = DEF.services || [];
+  if (S.community === undefined) S.community = DEF.community || {};
   S.log = S.log || [];
   S.analytics = S.analytics || {};
   S.now.console = S.now.console || [];
@@ -18,7 +19,7 @@
 
   var NAV = [
     ['Home', 'index'], ['About', 'about'], ['Work', 'projects'], ['Log', 'log'], ['Services', 'services'],
-    ['Library', 'library'], ['Blog', 'blog'], ['Certificates', 'certificates'], ['Contact', 'contact']
+    ['Library', 'library'], ['Blog', 'blog'], ['Community', 'community'], ['Certificates', 'certificates'], ['Contact', 'contact']
   ];
 
   var ICON = {
@@ -482,18 +483,105 @@
   };
 
   PAGES.community = function () {
-    var L = S.links;
+    var C = S.community || {}, L = S.links, open = C.status === 'open';
+    function mailto(subject) { return 'mailto:' + S.email + '?subject=' + encodeURIComponent(subject); }
+    function waitBtn(cls) {
+      var props = { class: cls || 'btn btn-primary' };
+      return C.waitlistUrl ? h('a', Object.assign(props, ext(C.waitlistUrl)), 'Join the waitlist')
+        : h('a', Object.assign(props, { href: mailto('Community waitlist') }), 'Join the waitlist');
+    }
+    function num(v) { var n = parseFloat(String(v == null ? '' : v).replace(/[^\d.]/g, '')); return isNaN(n) ? 0 : n; }
+    function list(v) { return (Array.isArray(v) ? v : []).filter(function (x) { return x; }); }
+
+    var pill = $('#cm-status');
+    if (pill) {
+      pill.className = 'cm-pill ' + (open ? 'open' : 'soon');
+      pill.append(h('span', { class: 'dot', 'aria-hidden': 'true' }), open ? 'Open for members' : 'Opening soon');
+    }
+    var act = $('#cm-actions');
+    if (act) {
+      if (open) {
+        act.append(h('a', { class: 'btn btn-primary', href: '#plans' }, 'See membership'));
+        if (C.loginUrl) act.append(h('a', Object.assign({ class: 'btn btn-ghost' }, ext(C.loginUrl)), 'Member login'));
+      } else {
+        act.append(waitBtn(), h('span', { class: 'muted small', text: 'One email when the doors open. No spam.' }));
+      }
+    }
+
+    var perks = list(C.perks).filter(function (p) { return p.title; });
+    var ph = $('#cm-perks');
+    if (ph && perks.length) {
+      perks.forEach(function (p) {
+        ph.append(h('article', { class: 'cm-perk' }, h('h3', { dir: 'auto', text: p.title }), p.text ? h('p', { dir: 'auto', text: p.text }) : null));
+      });
+    } else if ($('#cm-perks-sec')) $('#cm-perks-sec').hidden = true;
+
+    var plans = list(C.plans).filter(function (p) { return p.name; });
+    var host = $('#cm-plans');
+    if (host && plans.length) {
+      var iv = 'month';
+      var hasYear = plans.some(function (p) { return num(p.priceYear) > 0 || p.urlYear; });
+      var save = 0;
+      plans.forEach(function (p) {
+        var m = num(p.priceMonth), y = num(p.priceYear);
+        if (m && y) save = Math.max(save, Math.round((1 - y / (m * 12)) * 100));
+      });
+      var draw = function () {
+        host.textContent = '';
+        plans.forEach(function (p) {
+          var price = iv === 'year' ? p.priceYear : p.priceMonth;
+          var url = iv === 'year' ? p.urlYear : p.urlMonth;
+          host.append(h('article', { class: 'plan' + (p.featured === 'yes' ? ' featured' : '') },
+            h('h3', { dir: 'auto', text: p.name }),
+            p.blurb ? h('p', { class: 'blurb', dir: 'auto', text: p.blurb }) : null,
+            price ? h('p', { class: 'price' }, price + (p.currency ? ' ' + p.currency : ''), h('small', { text: iv === 'year' ? '/ year' : '/ month' }))
+              : h('p', { class: 'price tbd', text: 'Price at launch' }),
+            list(p.perks).length ? h('ul', { class: 'plan-list' }, list(p.perks).map(function (x) { return h('li', { dir: 'auto', text: x }); })) : null,
+            open && url ? h('a', Object.assign({ class: 'btn btn-primary' }, ext(url)), iv === 'year' ? 'Join yearly' : 'Join monthly')
+              : open ? h('a', { class: 'btn btn-primary', href: mailto('Join the community: ' + p.name) }, 'Ask to join')
+              : waitBtn()));
+        });
+      };
+      var bill = $('#cm-billing');
+      if (bill && hasYear) {
+        var grp = h('div', { class: 'billing', role: 'group', 'aria-label': 'Billing period' });
+        [['month', 'Monthly'], ['year', 'Yearly']].forEach(function (c) {
+          var b = h('button', { type: 'button', 'aria-pressed': String(iv === c[0]) }, c[1], c[0] === 'year' && save > 0 ? h('span', { class: 'save', text: 'Save ' + save + '%' }) : null);
+          b.addEventListener('click', function () {
+            iv = c[0];
+            Array.prototype.forEach.call(grp.children, function (x, i) { x.setAttribute('aria-pressed', String(['month', 'year'][i] === iv)); });
+            draw();
+          });
+          grp.append(b);
+        });
+        bill.append(grp);
+      }
+      draw();
+    } else if ($('#plans')) $('#plans').hidden = true;
+
+    var sup = list(C.support).filter(function (x) { return x.title; });
+    var sh = $('#cm-support');
+    if (sh && sup.length) {
+      sup.forEach(function (x) {
+        sh.append(h('article', { class: 'cm-sup' }, h('h3', { dir: 'auto', text: x.title }), x.text ? h('p', { dir: 'auto', text: x.text }) : null,
+          x.url ? h('a', Object.assign({ class: 'btn btn-ghost' }, ext(x.url)), x.label || 'Support')
+            : h('p', { class: 'muted small', text: 'Opens with the community.' })));
+      });
+    } else if ($('#cm-support-sec')) $('#cm-support-sec').hidden = true;
+
+    var faq = list(C.faq).filter(function (x) { return x.q; });
+    var fh = $('#cm-faq');
+    if (fh && faq.length) {
+      faq.forEach(function (x) {
+        fh.append(h('details', {}, h('summary', { dir: 'auto', text: x.q }), x.a ? h('p', { dir: 'auto', text: x.a }) : null));
+      });
+    } else if ($('#cm-faq-sec')) $('#cm-faq-sec').hidden = true;
+
     var yt = $('#yt-action');
     if (yt) {
       if (L.youtube) yt.append(h('a', Object.assign({ class: 'btn btn-primary' }, ext(L.youtube)), 'Watch on YouTube'));
-      else yt.append(h('a', { class: 'btn btn-primary', href: 'mailto:' + S.email + '?subject=' + encodeURIComponent('Notify me: channel launch') }, 'Tell me when it starts'),
+      else yt.append(h('a', { class: 'btn btn-ghost', href: mailto('Notify me: channel launch') }, 'Tell me when it starts'),
         h('span', { class: 'muted small', text: 'No spam. One email when the first video is out.' }));
-    }
-    var cm = $('#cm-action');
-    if (cm) {
-      if (L.community) cm.append(h('a', Object.assign({ class: 'btn btn-primary' }, ext(L.community)), 'Join the community'));
-      else cm.append(h('a', { class: 'btn btn-primary', href: 'mailto:' + S.email + '?subject=' + encodeURIComponent('Community waitlist') }, 'Join the waitlist'),
-        h('span', { class: 'muted small', text: 'You will get one email when the doors open.' }));
     }
   };
 

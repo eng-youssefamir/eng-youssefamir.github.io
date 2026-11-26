@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Channel and community | Youssef Amir</title>
-<meta name="description" content="A YouTube channel for book breakdowns and creative ideas, and a community to discuss them. Join the waitlist.">
+<title>Community | Youssef Amir</title>
+<meta name="description" content="A private community for readers and builders: members-only articles, videos and courses, and a group to talk in. Monthly or yearly membership.">
 <link rel="canonical" href="https://eng-youssefamir.github.io/community">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Youssef Amir">
-<meta property="og:title" content="Channel and community | Youssef Amir">
-<meta property="og:description" content="A YouTube channel for book breakdowns and creative ideas, and a community to discuss them. Join the waitlist.">
+<meta property="og:title" content="Community | Youssef Amir">
+<meta property="og:description" content="A private community for readers and builders: members-only articles, videos and courses, and a group to talk in. Monthly or yearly membership.">
 <meta property="og:url" content="https://eng-youssefamir.github.io/community">
 <meta property="og:image" content="https://eng-youssefamir.github.io/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,21 +22,48 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Cairo:wght@400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
-<link rel="stylesheet" href="style.css?v=202611262230">
+<link rel="stylesheet" href="style.css?v=202611261300">
 <script src="defaults.js" defer></script>
-<script src="data.js?v=202611262230" defer></script>
-<script src="app.js?v=202611262230" defer></script>
+<script src="data.js?v=202611261300" defer></script>
+<script src="app.js?v=202611261300" defer></script>
 </head>
 <body data-page="community">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header" id="site-header"></header>
 <main id="main">
 <section class="wrap page-head">
-  <h1>Channel and community</h1>
-  <p class="lead">The blog is the start. Next come video and a place to talk.</p>
+  <p id="cm-status"></p>
+  <h1>Community</h1>
+  <p class="lead" data-bind="community.lead">A private space for readers and builders: members-only articles and videos, guided learning, and a group where you can ask questions and get answers.</p>
+  <p class="actions" id="cm-actions"></p>
 </section>
 
-<section class="wrap" style="padding-top:20px">
+<section class="wrap section" id="cm-perks-sec" style="padding-top:20px">
+  <h2>What members get</h2>
+  <div id="cm-perks" class="cm-perks"></div>
+</section>
+
+<section class="wrap section" id="plans" style="padding-top:0">
+  <h2>Membership</h2>
+  <div id="cm-billing"></div>
+  <div id="cm-plans" class="plans"></div>
+</section>
+
+<section class="wrap section" id="cm-support-sec" style="padding-top:0">
+  <h2>Support without subscribing</h2>
+  <div id="cm-support" class="cm-support"></div>
+</section>
+
+<section class="wrap section" style="padding-top:0">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><h3>Join</h3><p>Pick monthly or yearly membership, or join the waitlist until the doors open.</p></li>
+    <li><h3>Log in to the community</h3><p>Members get their own account for the community space. It is separate from this website, which stays open to everyone.</p></li>
+    <li><h3>Get notified</h3><p>When something new is published for members, you get an email.</p></li>
+  </ol>
+</section>
+
+<section class="wrap section" style="padding-top:0">
   <div class="feature">
     <h2>The channel</h2>
     <div>
@@ -49,20 +76,11 @@
       <p class="actions" id="yt-action" style="margin-top:0"></p>
     </div>
   </div>
-  <div class="feature">
-    <h2>The community</h2>
-    <div>
-      <p>A place for readers and builders to talk about the books, the ideas, and the things we're making. It opens after the channel gets going.</p>
-      <p class="actions" id="cm-action" style="margin-top:0"></p>
-    </div>
-  </div>
-  <div class="feature">
-    <h2>While you wait</h2>
-    <div>
-      <p>Read the Arabic blog, or see which books I've already broken down.</p>
-      <p class="actions" style="margin-top:0"><a class="btn btn-ghost" href="blog.html">Read the blog</a><a class="btn btn-ghost" href="library.html">Open the library</a></p>
-    </div>
-  </div>
+</section>
+
+<section class="wrap section" id="cm-faq-sec" style="padding-top:0">
+  <h2>Questions</h2>
+  <div id="cm-faq" class="faq"></div>
 </section>
 </main>
 <footer class="site-footer" id="site-footer"></footer>

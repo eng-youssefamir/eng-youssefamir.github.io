@@ -303,52 +303,35 @@ window.SITE = {
       "author": "Daniel Kahneman",
       "status": "read",
       "topic": "Psychology",
-      "note": "Being broken down for the blog, part by part.",
-      "series": {
-        "title": "التفكير السريع والبطيء",
-        "parts": 10
-      }
+      "note": "Being broken down for the blog, part by part."
     },
     {
       "id": "emotional-intelligence",
       "title": "Emotional Intelligence",
       "author": "Daniel Goleman",
       "status": "read",
-      "topic": "Psychology",
-      "series": {
-        "title": "الذكاء العاطفي",
-        "parts": 7
-      }
+      "topic": "Psychology"
     },
     {
       "id": "mindset",
       "title": "Mindset",
       "author": "Carol S. Dweck",
       "status": "read",
-      "topic": "Psychology",
-      "series": {
-        "title": "عقلية النمو"
-      }
+      "topic": "Psychology"
     },
     {
       "id": "atomic-habits",
       "title": "Atomic Habits",
       "author": "James Clear",
       "status": "read",
-      "topic": "Self-development",
-      "series": {
-        "title": "العادات الذرية"
-      }
+      "topic": "Self-development"
     },
     {
       "id": "48-laws-of-power",
       "title": "The 48 Laws of Power",
       "author": "Robert Greene",
       "status": "read",
-      "topic": "Power and strategy",
-      "series": {
-        "title": "قواعد السطوة"
-      }
+      "topic": "Power and strategy"
     },
     {
       "id": "7-habits",
