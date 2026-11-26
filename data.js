@@ -555,7 +555,8 @@ window.SITE = {
       "title": "Yes! 50 Scientifically Proven Ways to Be Persuasive",
       "author": "Noah J. Goldstein, Steve J. Martin, and Robert B. Cialdini",
       "topic": "Psychology",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDi_TTsgyz5wtV5ahyJtekO-SGhcbAC089gEfD4_jDrg&s=10"
     },
     {
       "id": "originals",
