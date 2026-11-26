@@ -789,7 +789,8 @@ window.SITE = {
       "title": "The Psychology of Selling",
       "author": "Brian Tracy",
       "topic": "Business",
-      "status": "read"
+      "status": "read",
+      "cover": "https://www.google.com/imgres?q=The%20Psychology%20of%20Selling%0D%0A&imgurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F814E8YB1onL._AC_UF1000%2C1000_QL80_.jpg&imgrefurl=https%3A%2F%2Fwww.amazon.eg%2F-%2Fen%2FPsychology-Selling-Increase-Thought-Possible%2Fdp%2F0785288066&docid=Htp1WpsCKt7bXM&tbnid=PR1ja_YP_M9VtM&vet=12ahUKEwit4-222aSYAxXqh_0HHTCxE04QnPAOegQIOhAA..i&w=648&h=1000&hcb=2&ved=2ahUKEwit4-222aSYAxXqh_0HHTCxE04QnPAOegQIOhAA"
     },
     {
       "id": "the-hard-thing-about-hard-things",
