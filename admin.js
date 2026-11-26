@@ -816,7 +816,7 @@
       '<link rel="icon" href="' + FAVICON + '">\n' +
       '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
-      '<link rel="stylesheet" href="style.css?v=202611262230">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262230" defer></script>\n</head>\n' +
+      '<link rel="stylesheet" href="style.css?v=202611270100">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611270100" defer></script>\n</head>\n' +
       '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +
       '<div class="wrap">\n<article class="article" lang="' + (ar ? 'ar' : 'en') + '" dir="' + (ar ? 'rtl' : 'ltr') + '">\n' +
       '<header>\n<p class="post-kicker" id="post-kicker"></p>\n<h1 dir="auto">' + E(m.title) + '</h1>\n' +

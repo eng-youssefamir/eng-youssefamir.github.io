@@ -360,12 +360,16 @@
     el.append(h('p', { class: 'muted by', dir: 'auto', text: b.author }));
     el.append(h('p', { class: 'meta-row' }, badge(BOOK_STATUS[b.status] || b.status, b.status), b.topic ? h('span', { class: 'muted small topic', style: '--tc:' + COVER_COLORS[hash(b.topic) % COVER_COLORS.length], text: b.topic }) : null));
     if (b.rating) el.append(h('p', { class: 'stars', 'aria-label': 'Rated ' + b.rating + ' out of 5', text: '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating) }));
-    var blurb = b.takeaway || b.note;
-    if (blurb) el.append(h('p', { class: 'takeaway', dir: 'auto', text: blurb.length > 130 ? blurb.slice(0, 127).trim() + '…' : blurb }));
+    var slot = h('p', { class: 'bk-articles' });
+    el.append(slot);
     el.append(h('button', { class: 'textlink small more-btn', type: 'button', onclick: open }, 'Details'));
     fetchIndex().then(function (idx) {
-      var n = postsOfBook(idx, b).length;
-      if (n) el.append(h('a', { class: 'textlink small', href: 'blog.html?book=' + encodeURIComponent(b.id || slugT(b.title)) }, n > 1 ? 'Read the articles' : 'Read the article'));
+      var ps = postsOfBook(idx, b);
+      if (!ps.length) return;
+      var by = {}, top = 0;
+      ps.forEach(function (p) { if (p.series && p.series.name) { by[p.series.name] = (by[p.series.name] || 0) + 1; top = Math.max(top, by[p.series.name]); } });
+      var label = (top > 1 ? 'Series · ' : '') + ps.length + (ps.length > 1 ? ' articles' : ' article');
+      slot.append(h('a', { class: 'art-pill', href: 'blog.html?book=' + encodeURIComponent(b.id || slugT(b.title)), 'aria-label': label + ' about ' + b.title }, h('span', { class: 'art-ico', 'aria-hidden': 'true', text: '✎' }), label));
     });
     return el;
   }
@@ -1129,7 +1133,7 @@
         if (q && [p.title, p.excerpt, (p.tags || []).join(' ')].join(' ').toLowerCase().indexOf(q) === -1) return false;
         return true;
       });
-      if (state.series) list.sort(function (a, b) { return ((a.series && a.series.order) || 0) - ((b.series && b.series.order) || 0); });
+      if (state.series || state.book) list.sort(function (a, b) { return ((a.series && a.series.order) || 0) - ((b.series && b.series.order) || 0) || String(a.date).localeCompare(String(b.date)); });
       if (!list.length) {
         grid.append(h('div', { class: 'empty' }, h('p', { class: 'empty-title', text: posts.length ? 'No posts match.' : 'The first posts are on the way.' }),
           h('p', { text: posts.length ? 'Try another word or clear the filters.' : 'New articles will appear here soon.' })));
