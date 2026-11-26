@@ -547,7 +547,8 @@ window.SITE = {
       "title": "Influence: The Psychology of Persuasion",
       "author": "Robert B. Cialdini",
       "topic": "Psychology",
-      "status": "read"
+      "status": "read",
+      "cover": "https://www.google.com/imgres?q=Influence%3A%20The%20Psychology%20of%20Persuasion&imgurl=https%3A%2F%2Fdiwanegypt.com%2Fwp-content%2Fuploads%2F2023%2F05%2F9780063136892.jpg&imgrefurl=https%3A%2F%2Fdiwanegypt.com%2Fproduct%2Finfluence%2F&docid=LcE83BS2pW-hxM&tbnid=IOh5HGC5os-agM&vet=12ahUKEwjxzdXk1qSYAxWd_7sIHdlXIlMQnPAOegQIThAA..i&w=506&h=768&hcb=2&ved=2ahUKEwjxzdXk1qSYAxWd_7sIHdlXIlMQnPAOegQIThAA"
     },
     {
       "id": "yes-50-scientifically-proven-ways-to-be-persuasive",
