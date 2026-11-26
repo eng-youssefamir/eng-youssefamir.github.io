@@ -845,7 +845,8 @@ window.SITE = {
       "title": "Alibaba: The House That Jack Ma Built",
       "author": "Duncan Clark",
       "topic": "Business",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCsnYIquDLbR7qZA8azxacequwH_3hf5NRYRsZ3e6cCg&s=10"
     },
     {
       "id": "elon-musk",
