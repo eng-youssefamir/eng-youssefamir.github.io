@@ -13,7 +13,7 @@
   S.log = S.log || [];
   S.analytics = S.analytics || {};
   S.now.console = S.now.console || [];
-  S.links.blog = S.links.blog || 'https://lam-tokhlaq.blogspot.com';
+  delete S.links.blog; // the blog lives on this site now (blog.html)
   S.initials = S.initials || 'YA';
 
   var NAV = [
@@ -76,10 +76,6 @@
     return (S.books || []).filter(function (b) { return b.id === id; })[0];
   }
 
-  function blogSearch(q) {
-    return S.links.blog.replace(/\/$/, '') + '/search?q=' + encodeURIComponent(q);
-  }
-
   /* ---------- shared pieces ---------- */
   function toggleTheme() {
     var d = document.documentElement;
@@ -92,6 +88,7 @@
     var host = $('#site-header');
     if (!host) return;
     var cur = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '');
+    if (document.body.dataset.page === 'post') cur = 'blog';
     var brand = h('a', { class: 'brand', href: 'index.html', 'aria-label': S.name + ', home' },
       h('span', { class: 'brand-mark', 'aria-hidden': 'true', text: S.initials }),
       h('span', { class: 'brand-name', text: S.name }));
@@ -125,8 +122,8 @@
     var host = $('#site-footer');
     if (!host) return;
     var L = S.links;
-    var links = [['Blog', L.blog], ['LinkedIn', L.linkedin], ['GitHub', L.github]];
-    var internal = [['Community', 'community.html'], ['Résumé', 'cv.html']];
+    var links = [['LinkedIn', L.linkedin], ['GitHub', L.github]];
+    var internal = [['Blog', 'blog.html'], ['Community', 'community.html'], ['Résumé', 'cv.html']];
     if (L.youtube) links.push(['YouTube', L.youtube]);
     host.append(h('div', { class: 'wrap foot' },
       h('div', {},
@@ -215,62 +212,6 @@
         h('span', { class: 'muted mini-by', text: b.author })));
   }
 
-  /* ---------- blog feed (Blogger JSONP, with a graceful fallback) ---------- */
-  function blogHost() {
-    try { return new URL(S.links.blog).hostname.split('.')[0]; } catch (e) { return ''; }
-  }
-
-  function fetchPosts(max, cb) {
-    var name = '__bp' + Math.random().toString(36).slice(2);
-    var script = document.createElement('script');
-    var done = false;
-    var timer;
-    function finish(r) {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      try { delete window[name]; } catch (e) { window[name] = undefined; }
-      script.remove();
-      cb(r);
-    }
-    timer = setTimeout(function () { finish(null); }, 7000);
-    window[name] = function (d) {
-      var entries = (d && d.feed && d.feed.entry) || [];
-      var host = blogHost();
-      finish(entries.map(function (en) {
-        var link = (en.link || []).filter(function (l) { return l.rel === 'alternate'; })[0];
-        return {
-          title: (en.title && en.title.$t) || '',
-          url: link ? link.href : '',
-          date: (en.published && en.published.$t) || ''
-        };
-      }).filter(function (p) {
-        try { return p.title && new URL(p.url).hostname.indexOf(host + '.blogspot.') === 0; } catch (e) { return false; }
-      }));
-    };
-    script.onerror = function () { finish(null); };
-    script.src = S.links.blog.replace(/\/$/, '') + '/feeds/posts/default?alt=json-in-script&max-results=' + max + '&callback=' + name;
-    document.head.append(script);
-  }
-
-  function renderPosts(ul, max) {
-    if (!ul) return;
-    ul.append(h('li', { class: 'muted', text: 'Loading the latest posts' }));
-    fetchPosts(max, function (posts) {
-      ul.textContent = '';
-      if (!posts || !posts.length) {
-        ul.append(h('li', { class: 'muted' }, 'The latest posts are on the blog. ',
-          h('a', Object.assign({ class: 'textlink' }, ext(S.links.blog)), 'Open the blog')));
-        return;
-      }
-      posts.forEach(function (p) {
-        ul.append(h('li', {},
-          h('a', Object.assign({ dir: 'auto' }, ext(p.url)), p.title),
-          h('time', { datetime: p.date, text: fmtDate(p.date) })));
-      });
-    });
-  }
-
   /* ---------- reusable renderers ---------- */
   function renderCerts(host) {
     if (!host) return;
@@ -331,7 +272,7 @@
     renderSpark($('#spark'));
     var lw = $('#log-home-wrap');
     if (lw && S.log.length) { lw.hidden = false; renderLog($('#log-home'), 3); }
-    renderPosts($('#latest-posts'), 3);
+    renderLatest($('#latest-posts'), 3);
     renderConsole($('#console'));
     renderCredsCompact($('#creds'));
   };
@@ -422,7 +363,10 @@
     var blurb = b.takeaway || b.note;
     if (blurb) el.append(h('p', { class: 'takeaway', dir: 'auto', text: blurb.length > 130 ? blurb.slice(0, 127).trim() + '…' : blurb }));
     el.append(h('button', { class: 'textlink small more-btn', type: 'button', onclick: open }, 'Details'));
-    if (b.series) el.append(h('a', Object.assign({ class: 'textlink small' }, ext(blogSearch(b.series.title))), 'Read the series'));
+    fetchIndex().then(function (idx) {
+      var n = postsOfBook(idx, b).length;
+      if (n) el.append(h('a', { class: 'textlink small', href: 'blog.html?book=' + encodeURIComponent(b.id || slugT(b.title)) }, n > 1 ? 'Read the articles' : 'Read the article'));
+    });
     return el;
   }
 
@@ -448,19 +392,23 @@
       if (b.takeaway) info.append(h('blockquote', { class: 'bk-take', dir: 'auto' }, h('strong', { text: 'What I took from it' }), h('span', { text: b.takeaway })));
       if (b.note) info.append(h('p', { class: 'small muted', dir: 'auto', text: b.note }));
       if (!b.description && !b.takeaway && !b.note) info.append(h('p', { class: 'muted', text: b.status === 'next' ? 'On the list. Notes will appear here once I start it.' : 'No notes written for this book yet.' }));
-      if (b.series) {
-        var sr = b.series, pct = sr.parts ? Math.min(100, Math.round((sr.done || 0) / sr.parts * 100)) : 0;
-        var box = h('div', { class: 'bk-series' }, h('strong', { dir: 'auto', text: sr.title }));
-        if (sr.parts) {
-          var tr = h('div', { class: 'bar-track light' }, h('span', { class: 'bar-fill' }));
-          tr.firstChild.style.setProperty('--w', pct + '%');
-          box.append(h('span', { class: 'muted small', text: (sr.done || 0) + ' of ' + sr.parts + ' articles written' }), tr);
-        }
-        box.append(h('a', Object.assign({ class: 'btn btn-primary btn-sm' }, ext(blogSearch(sr.title))), 'Read the series on the blog'));
-        info.append(box);
-      }
       body.append(h('div', { class: 'bk-cover' }, cover(b)), info);
       prev.hidden = next.hidden = list.length < 2;
+      fetchIndex().then(function (idx) {
+        if (list[i] !== b || !body.isConnected) return;
+        var ps = postsOfBook(idx, b);
+        if (!ps.length) return;
+        ps.sort(function (x, y) { return ((x.series && x.series.order) || 0) - ((y.series && y.series.order) || 0) || String(x.date).localeCompare(String(y.date)); });
+        var sr = b.series || {};
+        var sec = h('div', { class: 'bk-posts' }, h('strong', { dir: 'auto', text: sr.title || 'Articles about this book' }));
+        if (sr.parts) {
+          var tr = h('div', { class: 'bar-track light' }, h('span', { class: 'bar-fill' }));
+          tr.firstChild.style.setProperty('--w', Math.min(100, Math.round(ps.length / sr.parts * 100)) + '%');
+          sec.append(h('span', { class: 'muted small', style: 'display:block', text: ps.length + ' of ' + sr.parts + ' articles published' }), tr);
+        }
+        sec.append(h('ul', {}, ps.map(function (p) { return h('li', {}, h('a', { href: postUrl(p), dir: 'auto', text: p.title })); })));
+        info.append(sec);
+      });
     }
     function go(d) { i = (i + d + list.length) % list.length; show(); }
     function key(e) {
@@ -523,27 +471,6 @@
     draw();
   };
 
-  PAGES.blog = function () {
-    var host = $('#series');
-    var withSeries = S.books.filter(function (b) { return b.series; });
-    if (host) withSeries.forEach(function (b) {
-      var s = b.series;
-      var pct = s.parts ? Math.round((s.done / s.parts) * 100) : 100;
-      host.append(h('article', { class: 'series' },
-        cover(b, true),
-        h('div', {},
-          h('h3', { class: 'ar-line', lang: 'ar', text: s.title }),
-          h('p', { class: 'muted', text: b.title + ', ' + b.author }),
-          s.state === 'in-progress'
-            ? h('div', { class: 'progress' },
-                h('div', { class: 'bar-track', role: 'img', 'aria-label': s.done + ' of ' + s.parts + ' parts written' }, h('span', { style: 'width:' + pct + '%' })),
-                h('span', { class: 'small muted', text: s.done + ' of ' + s.parts + ' parts written' }))
-            : h('p', { class: 'small muted', text: s.parts ? 'Complete, ' + s.parts + ' articles' : 'Complete' })),
-        h('a', Object.assign({ class: 'btn btn-ghost btn-sm' }, ext(blogSearch(s.title))), 'Read the series')));
-    });
-    renderPosts($('#blog-posts'), 8);
-  };
-
   PAGES.certificates = function () {
     renderCerts($('#cert-list'));
     var ed = $('#education');
@@ -585,11 +512,12 @@
     var ls = $('#contact-links');
     if (ls) {
       var L = S.links;
-      var rows = [['LinkedIn', L.linkedin], ['GitHub', L.github], ['Blog', L.blog]];
+      var rows = [['LinkedIn', L.linkedin], ['GitHub', L.github]];
       if (L.youtube) rows.push(['YouTube', L.youtube]);
       rows.forEach(function (r) {
         ls.append(h('li', {}, h('a', ext(r[1]), r[0]), h('span', { class: 'muted small', text: r[1].replace(/^https?:\/\//, '') })));
       });
+      ls.append(h('li', {}, h('a', { href: 'blog.html' }, 'Blog'), h('span', { class: 'muted small', text: 'eng-youssefamir.github.io/blog' })));
     }
   };
 
@@ -991,6 +919,241 @@
     sc.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count');
     document.head.append(sc);
   }
+
+  /* ---------- the blog on this site ---------- */
+  var idxPromise = null;
+  function fetchIndex() {
+    if (!idxPromise) {
+      idxPromise = fetch('posts/index.json?v=' + Math.floor(Date.now() / 300000))
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .catch(function () { return []; })
+        .then(function (a) { return Array.isArray(a) ? a.filter(function (p) { return p && p.slug; }) : []; });
+    }
+    return idxPromise;
+  }
+  function pubPosts(idx) {
+    return idx.filter(function (p) { return !p.draft; }).sort(function (a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
+  }
+  function postUrl(p) { return 'posts/' + p.slug + '.html'; }
+  function slugT(t) { return String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function bookOfPost(p) {
+    if (!p.book) return null;
+    return S.books.filter(function (b) { return (b.id || slugT(b.title)) === p.book || slugT(b.title) === p.book; })[0] || null;
+  }
+  /* A post belongs to a book only when it is linked to one. Everything else is a personal article. */
+  function postsOfBook(idx, b) {
+    var key = b.id || slugT(b.title), alt = slugT(b.title);
+    return pubPosts(idx).filter(function (p) { return p.book && (p.book === key || p.book === alt); });
+  }
+  function kindOf(p) { return p && p.book ? 'book' : 'personal'; }
+  function personalLabel(ar, long) { return ar ? 'مقال شخصي' : (long ? 'Personal article' : 'Personal'); }
+  function fmtDateL(iso, ar) {
+    try { return new Intl.DateTimeFormat(ar ? 'ar-u-nu-latn' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso)); } catch (e) { return ''; }
+  }
+  function minsText(n, ar) {
+    if (!ar) return n + ' min read';
+    return n === 1 ? 'قراءة في دقيقة' : n === 2 ? 'قراءة في دقيقتين' : 'قراءة في ' + n + ' دقائق';
+  }
+  var BT = {
+    en: { reply: 'Reply by email', replyText: 'Disagree, want to add something, or have a question? Write to me. I read every email.', replyBtn: 'Write a reply', share: 'Share', copy: 'Copy link', copied: 'Copied', aboutBook: 'About the book', part: 'Part', prev: 'Previous', next: 'Next', more: 'Keep reading', inSeries: 'In this series' },
+    ar: { reply: 'ردّ عليّ بالبريد', replyText: 'تختلف معي، أو تريد أن تضيف، أو عندك سؤال؟ راسلني، فأنا أقرأ كل رسالة.', replyBtn: 'اكتب ردّك', share: 'شارك المقال', copy: 'انسخ الرابط', copied: 'تم النسخ', aboutBook: 'عن الكتاب', part: 'الجزء', prev: 'السابق', next: 'التالي', more: 'تابع القراءة', inSeries: 'في هذه السلسلة' }
+  };
+
+  function postCard(p) {
+    var ar = p.lang === 'ar';
+    var color = COVER_COLORS[hash(p.slug) % COVER_COLORS.length];
+    var cv = h('a', { class: 'pc-cover', href: postUrl(p), tabindex: '-1', 'aria-hidden': 'true' });
+    if (p.cover) cv.append(h('img', { src: p.cover, alt: '', loading: 'lazy' }));
+    else { cv.style.background = color; cv.append(h('span', { class: 'pc-letter', text: (p.title || '?').trim().charAt(0) })); }
+    var card = h('article', { class: 'pcard', lang: ar ? 'ar' : 'en', dir: ar ? 'rtl' : 'ltr' }, cv);
+    var body = h('div', { class: 'pc-body' });
+    body.append(h('p', { class: 'pc-meta' },
+      h('time', { datetime: p.date, text: fmtDateL(p.date, ar) }),
+      h('span', { text: minsText(p.mins || 1, ar) })));
+    body.append(h('h3', {}, h('a', { href: postUrl(p), text: p.title })));
+    if (p.excerpt) body.append(h('p', { class: 'pc-ex', text: p.excerpt }));
+    var chips = h('p', { class: 'pc-chips' });
+    var b = bookOfPost(p);
+    if (kindOf(p) === 'personal') chips.append(h('span', { class: 'chip-s chip-personal', text: personalLabel(ar) }));
+    else if (b) chips.append(h('span', { class: 'chip-s chip-book', text: b.title }));
+    card.dataset.kind = kindOf(p);
+    if (p.series && p.series.name) chips.append(h('span', { class: 'chip-s chip-series', text: p.series.name + (p.series.order ? ' · ' + p.series.order : '') }));
+    (p.tags || []).slice(0, 3).forEach(function (t) { chips.append(h('span', { class: 'chip-s chip-tag', text: t })); });
+    if (chips.children.length) body.append(chips);
+    card.append(body);
+    return card;
+  }
+
+  function renderLatest(ul, max) {
+    if (!ul) return;
+    fetchIndex().then(function (idx) {
+      var list = pubPosts(idx).slice(0, max);
+      if (!list.length) {
+        ul.append(h('li', { class: 'muted' }, 'New articles are on the way. ', h('a', { class: 'textlink', href: 'blog.html' }, 'Open the blog')));
+        return;
+      }
+      list.forEach(function (p) {
+        ul.append(h('li', {},
+          h('a', { href: postUrl(p), dir: 'auto', text: p.title }),
+          h('time', { datetime: p.date, text: fmtDate(p.date) })));
+      });
+    });
+  }
+
+  PAGES.blog = function () {
+    var q0 = new URLSearchParams(location.search);
+    var state = { lang: 'all', kind: /^(book|personal)$/.test(q0.get('kind') || '') ? q0.get('kind') : 'all', q: q0.get('q') || '', series: q0.get('series') || '', book: q0.get('book') || '', tag: q0.get('tag') || '' };
+    var grid = $('#posts-grid'), ctrl = $('#blog-controls'), seriesHost = $('#series'), posts = [];
+
+    function draw() {
+      grid.textContent = '';
+      var q = state.q.trim().toLowerCase();
+      var list = posts.filter(function (p) {
+        if (state.lang !== 'all' && p.lang !== state.lang) return false;
+        if (state.kind !== 'all' && kindOf(p) !== state.kind) return false;
+        if (state.series && !(p.series && p.series.name === state.series)) return false;
+        if (state.book && p.book !== state.book) return false;
+        if (state.tag && (p.tags || []).indexOf(state.tag) === -1) return false;
+        if (q && [p.title, p.excerpt, (p.tags || []).join(' ')].join(' ').toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+      if (state.series) list.sort(function (a, b) { return ((a.series && a.series.order) || 0) - ((b.series && b.series.order) || 0); });
+      if (!list.length) {
+        grid.append(h('div', { class: 'empty' }, h('p', { class: 'empty-title', text: posts.length ? 'No posts match.' : 'The first posts are on the way.' }),
+          h('p', { text: posts.length ? 'Try another word or clear the filters.' : 'New articles will appear here soon.' })));
+        return;
+      }
+      list.forEach(function (p) { grid.append(postCard(p)); });
+    }
+
+    function drawCtrl() {
+      ctrl.textContent = '';
+      var chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'Language' });
+      [['all', 'All'], ['ar', 'العربية'], ['en', 'English']].forEach(function (c) {
+        chips.append(h('button', { class: 'chip', type: 'button', 'aria-pressed': String(state.lang === c[0]), onclick: function () { state.lang = c[0]; drawCtrl(); draw(); } }, c[1]));
+      });
+      var kinds = h('div', { class: 'chips', role: 'group', 'aria-label': 'Type of article' });
+      [['all', 'All types'], ['book', 'About books'], ['personal', 'Personal']].forEach(function (c) {
+        kinds.append(h('button', { class: 'chip', type: 'button', 'aria-pressed': String(state.kind === c[0]), onclick: function () { state.kind = c[0]; drawCtrl(); draw(); } }, c[1]));
+      });
+      var input = h('input', { type: 'search', placeholder: 'Search the posts', 'aria-label': 'Search the posts', dir: 'auto', value: state.q });
+      input.addEventListener('input', function () { state.q = input.value; draw(); });
+      ctrl.append(h('div', { class: 'toolbar' }, chips, kinds, input));
+      var active = [];
+      if (state.series) active.push(['Series: ' + state.series, 'series']);
+      if (state.book) { var bk = S.books.filter(function (b) { return (b.id || slugT(b.title)) === state.book; })[0]; active.push(['Book: ' + (bk ? bk.title : state.book), 'book']); }
+      if (state.tag) active.push(['Tag: ' + state.tag, 'tag']);
+      if (active.length) {
+        var row = h('p', { class: 'active-filters' });
+        active.forEach(function (a) { row.append(h('button', { class: 'pill', type: 'button', onclick: function () { state[a[1]] = ''; drawCtrl(); draw(); } }, a[0] + '  ✕')); });
+        ctrl.append(row);
+      }
+      var tags = {};
+      posts.forEach(function (p) { (p.tags || []).forEach(function (t) { tags[t] = (tags[t] || 0) + 1; }); });
+      var top = Object.keys(tags).sort(function (a, b) { return tags[b] - tags[a]; }).slice(0, 10);
+      if (top.length) ctrl.append(h('p', { class: 'tagrow' }, top.map(function (t) {
+        return h('button', { class: 'chip-s chip-tag' + (state.tag === t ? ' on' : ''), type: 'button', onclick: function () { state.tag = state.tag === t ? '' : t; drawCtrl(); draw(); } }, t);
+      })));
+    }
+
+    function drawSeries() {
+      if (!seriesHost) return;
+      seriesHost.textContent = '';
+      var groups = {};
+      posts.forEach(function (p) { if (p.series && p.series.name) (groups[p.series.name] = groups[p.series.name] || []).push(p); });
+      Object.keys(groups).forEach(function (name) {
+        var ps = groups[name], b = null;
+        ps.forEach(function (p) { b = b || bookOfPost(p); });
+        var total = (b && b.series && b.series.parts) || 0, done = ps.length;
+        var info = h('div', {}, h('h3', { text: name }),
+          b ? h('p', { class: 'muted', text: b.title + ', ' + b.author }) : null);
+        if (total) {
+          var tr = h('div', { class: 'bar-track light', role: 'img', 'aria-label': done + ' of ' + total + ' published' }, h('span', { class: 'bar-fill' }));
+          tr.firstChild.style.setProperty('--w', Math.min(100, Math.round(done / total * 100)) + '%');
+          info.append(tr, h('span', { class: 'small muted', text: done + ' of ' + total + ' articles published' }));
+        } else info.append(h('p', { class: 'small muted', text: done + (done === 1 ? ' article' : ' articles') }));
+        seriesHost.append(h('article', { class: 'series' }, b ? cover(b, true) : null, info,
+          h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: function () { state.series = name; drawCtrl(); draw(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 'Read the series')));
+      });
+      var sec = $('#series-sec');
+      if (sec) sec.hidden = !seriesHost.children.length;
+    }
+
+    fetchIndex().then(function (idx) {
+      posts = pubPosts(idx);
+      drawCtrl(); draw(); drawSeries();
+    });
+  };
+
+  PAGES.post = function () {
+    var node = $('#post-data');
+    if (!node) return;
+    var meta;
+    try { meta = JSON.parse(node.textContent); } catch (e) { return; }
+    var ar = meta.lang === 'ar', L = BT[ar ? 'ar' : 'en'];
+    var foot = $('#post-foot'), kick = $('#post-kicker');
+    var url = location.href.split('#')[0];
+
+    if (kick && kindOf(meta) === 'personal') kick.append(h('span', { class: 'chip-s chip-personal', text: personalLabel(ar, true) }));
+    if (kick && meta.series && meta.series.name) {
+      kick.append(h('a', { href: 'blog.html?series=' + encodeURIComponent(meta.series.name), text: meta.series.name + (meta.series.order ? ' · ' + L.part + ' ' + meta.series.order : '') }));
+    }
+    if (!foot) return;
+
+    var b = bookOfPost(meta);
+    if (b) {
+      foot.append(h('aside', { class: 'post-book' }, h('div', { class: 'pb-cover' }, cover(b)),
+        h('div', {}, h('p', { class: 'muted small', text: L.aboutBook }), h('h3', { text: b.title }), h('p', { class: 'muted', text: b.author }),
+          h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: function () { bookDialog([b], 0); } }, ar ? 'تفاصيل الكتاب' : 'Book details'))));
+    }
+
+    var subject = (ar ? 'ردّ على: ' : 'Re: ') + meta.title;
+    var bodyTxt = (ar ? 'المقال: ' : 'Article: ') + url + '\n\n';
+    foot.append(h('section', { class: 'post-reply' }, h('h3', { text: L.reply }), h('p', { text: L.replyText }),
+      h('a', { class: 'btn btn-primary', href: 'mailto:' + S.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyTxt), text: L.replyBtn })));
+
+    var copy = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: L.copy });
+    copy.addEventListener('click', function () {
+      var done = function () { copy.textContent = L.copied; setTimeout(function () { copy.textContent = L.copy; }, 1800); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () {});
+    });
+    foot.append(h('div', { class: 'post-share' }, h('span', { class: 'muted small', text: L.share }),
+      h('a', Object.assign({ class: 'btn btn-ghost btn-sm' }, ext('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url))), 'LinkedIn'),
+      h('a', Object.assign({ class: 'btn btn-ghost btn-sm' }, ext('https://wa.me/?text=' + encodeURIComponent(meta.title + ' ' + url))), 'WhatsApp'),
+      copy));
+
+    fetchIndex().then(function (idx) {
+      var all = pubPosts(idx);
+      if (meta.series && meta.series.name) {
+        var sp = all.filter(function (p) { return p.series && p.series.name === meta.series.name; })
+          .sort(function (a, c) { return (a.series.order || 0) - (c.series.order || 0); });
+        var at = sp.map(function (p) { return p.slug; }).indexOf(meta.slug);
+        if (sp.length > 1) {
+          var nav = h('nav', { class: 'post-series', 'aria-label': L.inSeries }, h('h3', { text: L.inSeries + ': ' + meta.series.name }));
+          var ol = h('ol', {});
+          sp.forEach(function (p) { ol.append(h('li', { class: p.slug === meta.slug ? 'on' : '' }, p.slug === meta.slug ? h('span', { text: p.title }) : h('a', { href: postUrl(p), text: p.title }))); });
+          nav.append(ol);
+          var pn = h('p', { class: 'pn' });
+          if (at > 0) pn.append(h('a', { class: 'btn btn-ghost btn-sm', href: postUrl(sp[at - 1]), text: (ar ? '→ ' : '← ') + L.prev }));
+          if (at >= 0 && at < sp.length - 1) pn.append(h('a', { class: 'btn btn-primary btn-sm', href: postUrl(sp[at + 1]), text: L.next + (ar ? ' ←' : ' →') }));
+          nav.append(pn);
+          foot.insertBefore(nav, foot.firstChild);
+        }
+      }
+      var others = all.filter(function (p) { return p.slug !== meta.slug; });
+      others.sort(function (a, c) {
+        function score(p) { return (meta.book && p.book === meta.book ? 4 : 0) + ((p.tags || []).filter(function (t) { return (meta.tags || []).indexOf(t) > -1; }).length) + (p.lang === meta.lang ? 1 : 0) + (kindOf(p) === kindOf(meta) ? 2 : 0); }
+        return score(c) - score(a);
+      });
+      if (others.length) {
+        var more = h('section', { class: 'post-more' }, h('h2', { text: L.more }));
+        var g = h('div', { class: 'pgrid' });
+        others.slice(0, 3).forEach(function (p) { g.append(postCard(p)); });
+        more.append(g);
+        foot.append(more);
+      }
+    });
+  };
 
   /* ---------- boot ---------- */
   function bind() {

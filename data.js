@@ -10,8 +10,7 @@ window.SITE = {
   "photo": "photo.jpg",
   "links": {
     "linkedin": "https://linkedin.com/in/youssef-amir-219a26379",
-    "github": "https://github.com/eng-youssefamir",
-    "blog": "https://lam-tokhlaq.blogspot.com"
+    "github": "https://github.com/eng-youssefamir"
   },
   "hero": {
     "hello": "Hi, I'm Youssef Amir.",
@@ -307,9 +306,7 @@ window.SITE = {
       "note": "Being broken down for the blog, part by part.",
       "series": {
         "title": "التفكير السريع والبطيء",
-        "parts": 10,
-        "done": 2,
-        "state": "in-progress"
+        "parts": 10
       }
     },
     {
@@ -320,9 +317,7 @@ window.SITE = {
       "topic": "Psychology",
       "series": {
         "title": "الذكاء العاطفي",
-        "parts": 7,
-        "done": 7,
-        "state": "complete"
+        "parts": 7
       }
     },
     {
@@ -332,8 +327,7 @@ window.SITE = {
       "status": "read",
       "topic": "Psychology",
       "series": {
-        "title": "عقلية النمو",
-        "state": "complete"
+        "title": "عقلية النمو"
       }
     },
     {
@@ -343,8 +337,7 @@ window.SITE = {
       "status": "read",
       "topic": "Self-development",
       "series": {
-        "title": "العادات الذرية",
-        "state": "complete"
+        "title": "العادات الذرية"
       }
     },
     {
@@ -354,8 +347,7 @@ window.SITE = {
       "status": "read",
       "topic": "Power and strategy",
       "series": {
-        "title": "قواعد السطوة",
-        "state": "complete"
+        "title": "قواعد السطوة"
       }
     },
     {
@@ -900,7 +892,7 @@ window.SITE = {
       "type": "Course certificate",
       "detail": "Instructors Ahmed Elfakharany : 19.5 total hours",
       "id": "UC-2edbb002-f762-489a-878f-45116e366bf9",
-      "verify": "ude.my/UC-2edbb002-f762-489a-878f-45116e366bf9"
+      "verify": "https://ude.my/UC-2edbb002-f762-489a-878f-45116e366bf9"
     },
     {
       "title": "Introduction to Computer Networking, Beginner Crash Course",
