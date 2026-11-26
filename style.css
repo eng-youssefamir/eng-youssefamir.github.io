@@ -664,3 +664,13 @@ button.chip-tag:hover, .chip-tag.on { border-color: var(--accent); color: var(--
 .post-more .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 900px) { .pgrid, .post-more .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .pgrid, .post-more .pgrid { grid-template-columns: 1fr; } .post-book { grid-template-columns: 80px 1fr; } }
+
+/* ---------- living background ---------- */
+.bg-net { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
+body { background: transparent; }
+html { background: var(--bg); }
+.btn { position: relative; overflow: hidden; }
+.ripple { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: currentColor; opacity: .35; pointer-events: none; animation: ripple .65s ease-out forwards; }
+@keyframes ripple { to { transform: scale(26); opacity: 0; } }
+.tilting { transition: transform .12s ease-out !important; will-change: transform; }
+@media print { .bg-net { display: none; } html { background: #fff; } }

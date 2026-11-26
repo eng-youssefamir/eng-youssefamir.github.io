@@ -327,13 +327,7 @@
             { k: 'description', label: 'وصف الكتاب (يظهر عند الضغط على الكتاب. افصل الفقرات بسطر فارغ)', t: 'textarea', rows: 6, wide: true },
             { k: 'takeaway', label: 'أهم ما خرجت به (جملة أو جملتان)', t: 'textarea', rows: 3, wide: true },
             { k: 'note', label: 'ملاحظة قصيرة', t: 'text', wide: true },
-            { k: 'cover', label: 'صورة الغلاف', t: 'cover', wide: true, help: 'اتركها فارغة ليبحث الموقع عن الغلاف تلقائياً، أو ارفع صورة غلافك بنفسك وستظهر بدل التلقائي.' },
-            { k: 'series', label: 'سلسلة على المدونة', t: 'object', toggle: 'لهذا الكتاب سلسلة مقالات على موقعي',
-              blank: function () { return { title: '' }; },
-              fields: [
-                { k: 'title', label: 'اسم السلسلة بالعربية', t: 'text', wide: true, help: 'يظهر كعنوان لمقالات الكتاب في تفاصيله. المقالات تُربط بالكتاب نفسه من محرر المدونة.' },
-                { k: 'parts', label: 'عدد المقالات المخطط لها', t: 'int', help: 'يُحسب عدد المنشور منها تلقائياً من المقالات الفعلية على الموقع.' }
-              ] }
+            { k: 'cover', label: 'صورة الغلاف', t: 'cover', wide: true, help: 'اتركها فارغة ليبحث الموقع عن الغلاف تلقائياً، أو ارفع صورة غلافك بنفسك وستظهر بدل التلقائي.' }
           ], blank: function () { return { id: '', title: '', author: '', status: 'read', topic: '' }; } }
       ]
     },
@@ -824,7 +818,7 @@
       '<link rel="icon" href="' + FAVICON + '">\n' +
       '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
-      '<link rel="stylesheet" href="style.css?v=202611262100">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262100" defer></script>\n</head>\n' +
+      '<link rel="stylesheet" href="style.css?v=202611262230">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262230" defer></script>\n</head>\n' +
       '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +
       '<div class="wrap">\n<article class="article" lang="' + (ar ? 'ar' : 'en') + '" dir="' + (ar ? 'rtl' : 'ltr') + '">\n' +
       '<header>\n<p class="post-kicker" id="post-kicker"></p>\n<h1 dir="auto">' + E(m.title) + '</h1>\n' +
