@@ -704,7 +704,8 @@ window.SITE = {
       "title": "Peak",
       "author": "Anders Ericsson and Robert Pool",
       "topic": "Learning",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHD9cuZmZZLuhv1SffMj_qmndETLvdL4vxnowBfQvv3g&s=10"
     },
     {
       "id": "how-we-learn",
