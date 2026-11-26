@@ -697,7 +697,8 @@ window.SITE = {
       "title": "Learning How to Learn",
       "author": "Barbara Oakley and Terrence Sejnowski",
       "topic": "Learning",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_kJmtJPPz4LZXKQOYAEO26Rc6KDVe1ASNh2mrCUX56A&s=10"
     },
     {
       "id": "peak",
