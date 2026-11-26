@@ -747,7 +747,8 @@ window.SITE = {
       "title": "How the Mighty Fall",
       "author": "Jim Collins",
       "topic": "Business",
-      "status": "read"
+      "status": "read",
+      "cover": "https://www.google.com/imgres?q=How%20the%20Mighty%20Fall%0D%0A&imgurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F51Qtp0sZlyL._AC_UF1000%2C1000_QL80_.jpg&imgrefurl=https%3A%2F%2Fwww.amazon.eg%2FJim-Collins%2Fdp%2F1847940420&docid=ZrzWdmMlSMeaKM&tbnid=jnaCsZ38ipIaqM&vet=12ahUKEwjm08Tg2aSYAxUV_rsIHWCGJL0QnPAOegQIKxAA..i&w=646&h=1000&hcb=2&itg=1&ved=2ahUKEwjm08Tg2aSYAxUV_rsIHWCGJL0QnPAOegQIKxAA"
     },
     {
       "id": "purple-cow",
