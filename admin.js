@@ -243,7 +243,8 @@
         { type: 'fields', title: 'الروابط', fields: [
           { k: 'links.linkedin', label: 'LinkedIn', t: 'text', ltr: true },
           { k: 'links.github', label: 'GitHub', t: 'text', ltr: true },
-          { k: 'links.youtube', label: 'قناة YouTube', t: 'text', ltr: true, help: 'اتركه فارغاً حتى تُنشأ القناة. حين تضيفه يتحول زر صفحة المجتمع إلى "Watch on YouTube".' }
+          { k: 'links.youtube', label: 'قناة YouTube', t: 'text', ltr: true, help: 'اتركه فارغاً حتى تُنشأ القناة. حين تضيفه يتحول زر صفحة المجتمع إلى "Watch on YouTube".' },
+          { k: 'links.community', label: 'رابط المجتمع', t: 'text', ltr: true, help: 'اتركه فارغاً حتى يُفتح المجتمع. حين تضيفه يتحول الزر إلى "Join the community".' }
         ] },
         { type: 'fields', title: 'إحصاءات الزوار (اختياري)', fields: [
           { k: 'analytics.goatcounter', label: 'رمز GoatCounter', t: 'text', ltr: true, help: 'أنشئ حساباً مجانياً على goatcounter.com واختر اسماً (مثل youssefamir)، ثم اكتب هذا الاسم هنا فقط. يعرض لك عدد الزوار وبلدانهم دون ملفات تعريف ارتباط.' }
@@ -417,51 +418,6 @@
             { k: 'note', label: 'ملاحظة (السعر أو طريقة العمل)', t: 'textarea', rows: 2, wide: true },
             { k: 'link', label: 'رابط الزر (اختياري، وإلا فهو بريد إليك)', t: 'text', ltr: true, wide: true }
           ], blank: function () { return { title: '', lang: 'ar', summary: '', points: [], note: '' }; } }
-      ]
-    },
-    {
-      id: 'community', label: 'المجتمع',
-      intro: 'صفحة المجتمع والاشتراك. اترك الأسعار والروابط فارغة حتى تجهزها وستعمل الصفحة بقائمة انتظار. حين تفتح المجتمع غيّر الحالة إلى «مفتوح» وأضف روابط الدفع. الحسابات والدفع والإشعارات تتم في المنصة التي تختارها، وهذه الصفحة هي واجهتها.',
-      blocks: [
-        { type: 'fields', title: 'الحالة والروابط', fields: [
-          { k: 'community.status', label: 'حالة المجتمع', t: 'select', options: [['soon', 'قريباً (قائمة انتظار)'], ['open', 'مفتوح للاشتراك']] },
-          { k: 'community.loginUrl', label: 'رابط دخول الأعضاء', t: 'text', ltr: true, help: 'الصفحة التي يسجّل منها الأعضاء دخولهم إلى المجتمع في المنصة التي تختارها. يظهر زر "Member login" حين تضيفه وتكون الحالة «مفتوح».' },
-          { k: 'community.waitlistUrl', label: 'رابط قائمة الانتظار (اختياري)', t: 'text', ltr: true, help: 'إن تركته فارغاً يصلك طلب الانضمام على بريدك.' },
-          { k: 'community.lead', label: 'الفقرة التعريفية', t: 'textarea', rows: 3, wide: true }
-        ] },
-        { type: 'list', title: 'ما يحصل عليه الأعضاء', path: 'community.perks', newLabel: 'ميزة جديدة', addLabel: 'إضافة ميزة',
-          itemTitle: function (it) { return it.title; },
-          fields: [
-            { k: 'title', label: 'العنوان', t: 'text', wide: true },
-            { k: 'text', label: 'وصف قصير', t: 'textarea', rows: 2, wide: true }
-          ], blank: function () { return { title: '', text: '' }; } },
-        { type: 'list', title: 'خطط الاشتراك', help: 'لكل خطة سعر شهري وسعر سنوي، ورابط دفع لكل منهما تحصل عليه من منصة الدفع. إن تركت السعر فارغاً تظهر عبارة «Price at launch».', path: 'community.plans', newLabel: 'خطة جديدة', addLabel: 'إضافة خطة',
-          itemTitle: function (it) { return it.name; }, itemMeta: function (it) { return it.priceMonth ? it.priceMonth + ' ' + (it.currency || '') : 'بلا سعر'; },
-          fields: [
-            { k: 'name', label: 'اسم الخطة', t: 'text', wide: true },
-            { k: 'featured', label: 'مظهر الخطة', t: 'select', options: [['', 'عادية'], ['yes', 'مميزة (إطار ملوّن)']] },
-            { k: 'currency', label: 'العملة (مثل USD)', t: 'text', ltr: true },
-            { k: 'priceMonth', label: 'السعر الشهري', t: 'text', ltr: true },
-            { k: 'priceYear', label: 'السعر السنوي', t: 'text', ltr: true },
-            { k: 'urlMonth', label: 'رابط الدفع الشهري', t: 'text', ltr: true, wide: true },
-            { k: 'urlYear', label: 'رابط الدفع السنوي', t: 'text', ltr: true, wide: true },
-            { k: 'blurb', label: 'وصف قصير', t: 'textarea', rows: 2, wide: true },
-            { k: 'perks', label: 'ما تشمله الخطة (نقطة في كل سطر)', t: 'lines', rows: 5, wide: true }
-          ], blank: function () { return { name: '', currency: 'USD', perks: [] }; } },
-        { type: 'list', title: 'دعم المحتوى بدون اشتراك', help: 'لمن يريد دعمك دون اشتراك شهري. الرابط من منصة تقبل التبرعات أو الدفع لمرة واحدة.', path: 'community.support', newLabel: 'خيار دعم جديد', addLabel: 'إضافة خيار دعم',
-          itemTitle: function (it) { return it.title; },
-          fields: [
-            { k: 'title', label: 'العنوان', t: 'text', wide: true },
-            { k: 'label', label: 'نص الزر', t: 'text' },
-            { k: 'url', label: 'رابط الدعم', t: 'text', ltr: true },
-            { k: 'text', label: 'وصف قصير', t: 'textarea', rows: 3, wide: true }
-          ], blank: function () { return { title: '', label: 'Support', text: '' }; } },
-        { type: 'list', title: 'الأسئلة الشائعة', path: 'community.faq', newLabel: 'سؤال جديد', addLabel: 'إضافة سؤال',
-          itemTitle: function (it) { return it.q; },
-          fields: [
-            { k: 'q', label: 'السؤال', t: 'text', wide: true },
-            { k: 'a', label: 'الجواب', t: 'textarea', rows: 3, wide: true }
-          ], blank: function () { return { q: '', a: '' }; } }
       ]
     },
     {
@@ -862,7 +818,7 @@
       '<link rel="icon" href="' + FAVICON + '">\n' +
       '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
-      '<link rel="stylesheet" href="style.css?v=202611261300">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611261300" defer></script>\n</head>\n' +
+      '<link rel="stylesheet" href="style.css?v=202611262230">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262230" defer></script>\n</head>\n' +
       '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +
       '<div class="wrap">\n<article class="article" lang="' + (ar ? 'ar' : 'en') + '" dir="' + (ar ? 'rtl' : 'ltr') + '">\n' +
       '<header>\n<p class="post-kicker" id="post-kicker"></p>\n<h1 dir="auto">' + E(m.title) + '</h1>\n' +
@@ -986,29 +942,6 @@
       syncKind(); touch();
     });
     syncKind();
-
-    var HOOK_KEY = 'ya_notify_hook', hookVal = '', wasPublished = post.status === 'published';
-    try { hookVal = localStorage.getItem(HOOK_KEY) || ''; } catch (e) { hookVal = ''; }
-    var notifyChk = h('input', { type: 'checkbox' });
-    notifyChk.checked = !!hookVal && !wasPublished;
-    var hookIn = h('input', { type: 'text', dir: 'ltr', autocomplete: 'off', placeholder: 'https://hook.make.com/...' });
-    hookIn.value = hookVal;
-    hookIn.addEventListener('change', function () { try { localStorage.setItem(HOOK_KEY, hookIn.value.trim()); } catch (e) { /* storage blocked */ } });
-    function scheduleNotify(m) {
-      var hook = hookIn.value.trim();
-      if (!hook) { msg.append(' لم يُرسل إشعار لأن رابط الأتمتة فارغ.'); return; }
-      var payload = new URLSearchParams({
-        title: m.title, url: location.origin + '/posts/' + m.slug + '.html', excerpt: m.excerpt || '', lang: m.lang,
-        date: m.date, kind: m.book ? 'book' : 'personal', book: m.book || '', site: location.host
-      });
-      notifyChk.checked = false;
-      msg.append(' سيُرسل الإشعار بعد دقيقة تقريباً حتى تكتمل صفحة المقال. أبقِ هذه النافذة مفتوحة.');
-      setTimeout(function () {
-        fetch(hook, { method: 'POST', mode: 'no-cors', body: payload })
-          .then(function () { msg.append(' أُرسل الإشعار.'); })
-          .catch(function () { msg.append(' تعذّر إرسال الإشعار.'); });
-      }, 70000);
-    }
 
     var serName = h('input', { type: 'text', dir: 'auto', autocomplete: 'off', placeholder: 'اسم السلسلة' });
     serName.value = post.series ? post.series.name || '' : '';
@@ -1145,7 +1078,6 @@
           saveBtn.disabled = false;
           say(published ? 'تم النشر. يظهر المقال على الموقع خلال دقيقة أو دقيقتين.' : 'حُفظت المسودة. لا تظهر للزوار.', true);
           if (published) msg.append(' ', h('a', { href: 'posts/' + clean.slug + '.html', target: '_blank', rel: 'noopener', text: 'فتح المقال' }));
-          if (published && notifyChk.checked) scheduleNotify(clean);
         })
         .catch(function (e) {
           saveBtn.disabled = false;
@@ -1183,9 +1115,6 @@
       bookField,
       h('div', { class: 'field wide' }, h('label', { text: 'السلسلة' }), h('div', { class: 'coverrow' }, serName, serOrd),
         h('span', { class: 'help', text: 'اكتب اسم السلسلة ثم رقم الجزء. المقالات التي تحمل الاسم نفسه تتجمع تلقائياً مع أزرار السابق والتالي.' })),
-      h('div', { class: 'field wide' }, h('label', { text: 'إشعار المشتركين' }),
-        h('label', { class: 'check' }, notifyChk, ' أرسل إشعاراً بعد النشر'), hookIn,
-        h('span', { class: 'help', text: 'ألصق رابط الأتمتة (Make أو Zapier أو n8n) الذي يرسل البريد لمشتركيك. يُحفظ على هذا الجهاز فقط ولا يظهر في الموقع. كل ما يُنشر من هنا علني، فلا تنشر هنا محتوى خاصاً بالأعضاء.' })),
       fieldWrap('وسوم (افصل بفاصلة)', tags, null, true),
       fieldWrap('ملخص قصير (اختياري)', excerpt, 'يظهر في البطاقات وعند المشاركة. إن تركته فارغاً يؤخذ من بداية المقال.', true),
       h('div', { class: 'field wide' }, h('label', { text: 'صورة الواجهة' }), coverPrev, h('div', { class: 'coverrow' }, coverFile, coverRemove), coverMsg));
@@ -1276,7 +1205,7 @@
       keepToken(token, remember);
       openEditor();
       if (purged) { markDirty(); setState('حذفتُ رابط بلوجر القديم من الإعدادات. اضغط "حفظ التغييرات" لتثبيت الحذف.', 'dirty'); }
-      else if (seeded) { markDirty(); setState('أضفتُ أقساماً جديدة (الخدمات والمجتمع). راجعها ثم اضغط "حفظ التغييرات".', 'dirty'); }
+      else if (seeded) { markDirty(); setState('أضفتُ أقساماً جديدة (الخدمات). راجعها ثم اضغط "حفظ التغييرات".', 'dirty'); }
     }).catch(function (e) {
       token = '';
       msgEl.className = 'msg';
