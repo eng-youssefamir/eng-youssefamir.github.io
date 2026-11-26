@@ -711,7 +711,8 @@ window.SITE = {
       "title": "How We Learn",
       "author": "Benedict Carey",
       "topic": "Learning",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhxC40soSV9SV2jH41kIV1UgqzTbBvXv8lZIvJUwh7qg&s=10"
     },
     {
       "id": "leaders-eat-last",
