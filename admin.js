@@ -950,9 +950,8 @@
     syncKind();
 
     var names = {};
-    // Removed old series from books to start fresh (per user request)
-    // Only load series from existing posts
     idx.forEach(function (p) { if (p.series && p.series.name) names[p.series.name] = 1; });
+    (data.books || []).forEach(function (b) { if (b.series && b.series.title) names[b.series.title] = 1; });
     var dl = h('datalist', { id: 'serieslist' }, Object.keys(names).map(function (n) { return h('option', { value: n }); }));
     var serName = h('input', { type: 'text', list: 'serieslist', dir: 'auto', placeholder: 'اسم السلسلة' });
     serName.value = post.series ? post.series.name || '' : '';

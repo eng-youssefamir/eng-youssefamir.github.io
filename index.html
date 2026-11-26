@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Youssef Amir | Platform Engineer in the making</title>
-<meta name="description" content="Writer, academic researcher, and Platform Engineer in the making.">
+<meta name="description" content="Youssef Amir is a writer, researcher, and Platform Engineer in the making. Linux, networking, and automation on one side, books and ideas on the other.">
 <link rel="canonical" href="https://eng-youssefamir.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Youssef Amir">
 <meta property="og:title" content="Youssef Amir | Platform Engineer in the making">
-<meta property="og:description" content="Writer, academic researcher, and Platform Engineer in the making.">
+<meta property="og:description" content="Youssef Amir is a writer, researcher, and Platform Engineer in the making. Linux, networking, and automation on one side, books and ideas on the other.">
 <meta property="og:url" content="https://eng-youssefamir.github.io/">
 <meta property="og:image" content="https://eng-youssefamir.github.io/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,87 +22,99 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Cairo:wght@400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
-<link rel="stylesheet" href="style.css?v=202611262300">
+<link rel="stylesheet" href="style.css?v=202611262100">
 <script src="defaults.js" defer></script>
-<script src="data.js?v=202611262300" defer></script>
-<script src="app.js?v=202611262300" defer></script>
+<script src="data.js?v=202611262100" defer></script>
+<script src="app.js?v=202611262100" defer></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Youssef Amir","jobTitle":"Platform Engineer in the making","url":"https://eng-youssefamir.github.io","sameAs":["https://linkedin.com/in/youssef-amir-219a26379","https://github.com/eng-youssefamir"]}
+</script>
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header" id="site-header"></header>
 <main id="main">
 <section class="hero wrap">
-  <div>
-    <p class="hello" data-bind="hero.hello">Hello, I'm Youssef.</p>
-    <div class="status" data-bind="availability">Open to remote platform engineering roles.</div>
-    <h1>
-      <span class="line" data-bind="hero.line1">I write about psychology and philosophy.</span>
-      <span class="line" data-bind="hero.line2">I'm also learning to build the systems that run the web.</span>
-    </h1>
-    <p class="lead" data-bind="hero.lead">A writer and academic researcher with a strong creative drive, currently training to become a Platform Engineer. I study Business Information Systems and build Linux, networking, and automation skills.</p>
-    <div class="actions">
-      <a class="btn btn-primary" href="about.html">More about me</a>
-      <a class="btn btn-ghost" href="blog.html">Read the blog</a>
+  <div class="hero-text">
+    <p class="status reveal-after"><span class="dot" aria-hidden="true"></span><span data-bind="availability">Open to entry-level and remote roles in platform, infrastructure, and DevOps.</span></p>
+    <p class="hello" data-bind="hero.hello">Hi, I'm Youssef Amir.</p>
+    <h1><span class="line" data-bind="hero.line1">I write about how people are built.</span><span class="line" data-bind="hero.line2">I'm learning to build what software runs on.</span></h1>
+    <p class="lead reveal-after" data-bind="hero.lead">Writer, researcher, and Platform Engineer in the making. I'm studying Linux, networking, and automation to work with international teams, and I break down books on psychology and self-development in Arabic.</p>
+    <p class="actions reveal-after"><a class="btn btn-primary" href="projects.html">See the platform path</a><a class="btn btn-ghost" href="contact.html">Get in touch</a><a class="textlink" href="cv.html#pdf">Download CV</a></p>
+  </div>
+  <div class="hero-photo" id="photo"></div>
+</section>
+
+<section class="wrap" aria-labelledby="lanes-h">
+  <h2 id="lanes-h" class="sr-only">Right now</h2>
+  <div class="lanes">
+    <div class="lane lane-ideas">
+      <h3 class="lane-title">Ideas</h3>
+      <p class="lane-sub">What I'm reading and writing.</p>
+      <div id="reading-now" class="stack"></div>
+      <h4 class="mini-h">From the blog</h4>
+      <ul id="latest-posts" class="posts"></ul>
+      <p style="margin-top:22px"><a class="textlink" href="library.html">Open the library</a></p>
+    </div>
+    <div class="lane lane-platform">
+      <h3 class="lane-title">Platform</h3>
+      <p class="lane-sub">What I'm building skills in.</p>
+      <div id="console" class="console"></div>
+      <p style="margin-top:26px"><a class="textlink" href="projects.html">See the full roadmap</a></p>
     </div>
   </div>
-  <div class="hero-photo">
-    <div class="photo" id="photo"></div>
+</section>
+
+<section class="wrap stats-wrap"><div id="stats" class="stats"></div></section>
+
+<section class="wrap spark-wrap"><div id="spark" class="spark"></div></section>
+
+<section class="wrap section" id="log-home-wrap" style="padding-top:0" hidden>
+  <h2>Learning log</h2>
+  <div id="log-home" class="log"></div>
+  <p style="margin-top:22px"><a class="textlink" href="log.html">See the full log</a></p>
+</section>
+
+<section class="section wrap">
+  <h2>What I do</h2>
+  <div class="rows" id="focus">
+    <div class="row">
+      <h3>Platform and infrastructure</h3>
+      <div>
+        <p>I'm learning the systems layer from the ground up: Linux, networking, containers, and the automation that ties them together. The roadmap, the status of every step, and the labs are public.</p>
+        <p><a class="textlink" href="projects.html">See the platform path</a></p>
+      </div>
+    </div>
+    <div class="row">
+      <h3>Writing and research</h3>
+      <div>
+        <p>Freelance copywriting and ghostwriting, academic research, and an Arabic blog on self-development, psychology, and philosophy.</p>
+        <p><a class="textlink" href="blog.html">Read the blog</a></p>
+      </div>
+    </div>
+    <div class="row">
+      <h3>Books and ideas</h3>
+      <div>
+        <p>I break a book into its core argument, an honest critique, and something you can use. The library tracks what I'm reading and what I've already covered.</p>
+        <p><a class="textlink" href="library.html">Browse the library</a></p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="wrap stats-wrap">
-  <div class="stats" id="stats"></div>
-</section>
-
-<section class="wrap spark-wrap">
-  <div class="spark" id="spark"></div>
-</section>
-
-<section class="wrap section">
-  <div class="lanes">
-    <article class="lane lane-ideas">
-      <h2 class="lane-title">Ideas</h2>
-      <p class="lane-sub">Psychology, philosophy, and the books behind them.</p>
-      <div class="mini-h">Reading now</div>
-      <div class="stack" id="reading-now"></div>
-    </article>
-    <article class="lane lane-platform">
-      <h2 class="lane-title">Platform</h2>
-      <p class="lane-sub">Linux, networking, and automation, learned in the open.</p>
-      <div class="console" id="console"></div>
-    </article>
-  </div>
-</section>
-
-<section class="wrap section">
-  <div class="rows" id="focus"></div>
-</section>
-
-<section class="wrap section" id="log-home-wrap" hidden>
-  <h2>Latest from the log</h2>
-  <div id="log-home"></div>
-  <p style="margin-top: 18px;"><a class="textlink" href="log.html">All log entries →</a></p>
-</section>
-
-<section class="wrap section">
-  <h2>Latest writing</h2>
-  <div class="pgrid" id="latest-posts"></div>
-  <p style="margin-top: 24px;"><a class="textlink" href="blog.html">All posts →</a></p>
-</section>
-
-<section class="wrap section">
+<section class="section wrap" style="padding-top:0">
   <h2>Credentials</h2>
-  <ul class="creds" id="creds"></ul>
-  <p style="margin-top: 22px;"><a class="textlink" href="certificates.html">All certificates →</a></p>
+  <ul id="creds" class="creds"></ul>
+  <p style="margin-top:22px"><a class="textlink" href="certificates.html">All certificates and education</a></p>
 </section>
 
 <section class="band">
   <div class="wrap band-inner">
     <div>
-      <h2>Let's work together.</h2>
-      <p>If you need clear writing, careful research, or someone who can learn fast and document what they build, I'm available.</p>
+      <h2>A YouTube channel and a community are on the way.</h2>
+      <p>Book breakdowns and creative ideas on video, and a place to talk about them.</p>
     </div>
-    <a class="btn" href="contact.html">Get in touch</a>
+    <a class="btn" href="community.html">See what's planned</a>
   </div>
 </section>
 </main>
