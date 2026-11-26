@@ -702,3 +702,10 @@ main::before { display: none; }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
+
+/* series list on the blog page */
+.series { grid-template-columns: minmax(0, 1fr) auto; }
+.series.has-cover { grid-template-columns: 56px minmax(0, 1fr) auto; }
+.series h3 { margin-bottom: 4px; }
+.series .btn { white-space: nowrap; }
+@media (max-width: 900px) { .series, .series.has-cover { grid-template-columns: minmax(0, 1fr); } .series.has-cover { grid-template-columns: 48px minmax(0, 1fr); } .series .btn { grid-column: 1 / -1; justify-self: start; } .series.has-cover .btn { grid-column: 2; } }

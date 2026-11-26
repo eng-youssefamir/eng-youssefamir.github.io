@@ -1184,7 +1184,7 @@
           tr.firstChild.style.setProperty('--w', Math.min(100, Math.round(done / total * 100)) + '%');
           info.append(tr, h('span', { class: 'small muted', text: done + ' of ' + total + ' articles published' }));
         } else info.append(h('p', { class: 'small muted', text: done + (done === 1 ? ' article' : ' articles') }));
-        seriesHost.append(h('article', { class: 'series' }, b ? cover(b, true) : null, info,
+        seriesHost.append(h('article', { class: 'series' + (b ? ' has-cover' : '') }, b ? cover(b, true) : null, info,
           h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: function () { state.series = name; drawCtrl(); draw(); grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 'Read the series')));
       });
       var sec = $('#series-sec');
