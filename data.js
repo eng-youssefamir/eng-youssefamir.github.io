@@ -519,6 +519,356 @@ window.SITE = {
       "status": "read",
       "topic": "Philosophy",
       "cover": "covers/meditations.jpg?v=1795322518936"
+    },
+    {
+      "id": "ego-is-the-enemy",
+      "title": "Ego Is the Enemy",
+      "author": "Ryan Holiday",
+      "topic": "Philosophy",
+      "status": "read"
+    },
+    {
+      "id": "discipline-is-destiny",
+      "title": "Discipline Is Destiny",
+      "author": "Ryan Holiday",
+      "topic": "Philosophy",
+      "status": "read"
+    },
+    {
+      "id": "money-master-the-game",
+      "title": "Money: Master the Game",
+      "author": "Tony Robbins",
+      "topic": "Finance",
+      "status": "read"
+    },
+    {
+      "id": "influence-the-psychology-of-persuasion",
+      "title": "Influence: The Psychology of Persuasion",
+      "author": "Robert B. Cialdini",
+      "topic": "Psychology",
+      "status": "read"
+    },
+    {
+      "id": "yes-50-scientifically-proven-ways-to-be-persuasive",
+      "title": "Yes! 50 Scientifically Proven Ways to Be Persuasive",
+      "author": "Noah J. Goldstein, Steve J. Martin, and Robert B. Cialdini",
+      "topic": "Psychology",
+      "status": "read"
+    },
+    {
+      "id": "originals",
+      "title": "Originals",
+      "author": "Adam Grant",
+      "topic": "Psychology",
+      "status": "read"
+    },
+    {
+      "id": "give-and-take",
+      "title": "Give and Take",
+      "author": "Adam Grant",
+      "topic": "Psychology",
+      "status": "read"
+    },
+    {
+      "id": "willpower",
+      "title": "Willpower",
+      "author": "Roy F. Baumeister and John Tierney",
+      "topic": "Psychology",
+      "status": "read"
+    },
+    {
+      "id": "why-we-sleep",
+      "title": "Why We Sleep",
+      "author": "Matthew Walker",
+      "topic": "Health",
+      "status": "read"
+    },
+    {
+      "id": "the-one-thing",
+      "title": "The ONE Thing",
+      "author": "Gary Keller and Jay Papasan",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "first-things-first",
+      "title": "First Things First",
+      "author": "Stephen R. Covey, A. Roger Merrill, and Rebecca R. Merrill",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "smarter-faster-better",
+      "title": "Smarter Faster Better",
+      "author": "Charles Duhigg",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "indistractable",
+      "title": "Indistractable",
+      "author": "Nir Eyal",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "the-checklist-manifesto",
+      "title": "The Checklist Manifesto",
+      "author": "Atul Gawande",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "the-80-20-principle",
+      "title": "The 80/20 Principle",
+      "author": "Richard Koch",
+      "topic": "Productivity",
+      "status": "read"
+    },
+    {
+      "id": "tiny-habits",
+      "title": "Tiny Habits",
+      "author": "BJ Fogg",
+      "topic": "Habits",
+      "status": "read"
+    },
+    {
+      "id": "the-miracle-morning",
+      "title": "The Miracle Morning",
+      "author": "Hal Elrod",
+      "topic": "Habits",
+      "status": "read"
+    },
+    {
+      "id": "the-5-second-rule",
+      "title": "The 5 Second Rule",
+      "author": "Mel Robbins",
+      "topic": "Self-development",
+      "status": "read"
+    },
+    {
+      "id": "make-your-bed",
+      "title": "Make Your Bed",
+      "author": "William H. McRaven",
+      "topic": "Self-development",
+      "status": "read"
+    },
+    {
+      "id": "so-good-they-can-t-ignore-you",
+      "title": "So Good They Can’t Ignore You",
+      "author": "Cal Newport",
+      "topic": "Career",
+      "status": "read"
+    },
+    {
+      "id": "how-to-stop-worrying-and-start-living",
+      "title": "How to Stop Worrying and Start Living",
+      "author": "Dale Carnegie",
+      "topic": "Self-development",
+      "status": "read"
+    },
+    {
+      "id": "how-to-develop-self-confidence-and-influence-people-by-public-speaking",
+      "title": "How to Develop Self-Confidence and Influence People by Public Speaking",
+      "author": "Dale Carnegie",
+      "topic": "Communication",
+      "status": "read"
+    },
+    {
+      "id": "talk-like-ted",
+      "title": "Talk Like TED",
+      "author": "Carmine Gallo",
+      "topic": "Communication",
+      "status": "read"
+    },
+    {
+      "id": "ultralearning",
+      "title": "Ultralearning",
+      "author": "Scott H. Young",
+      "topic": "Learning",
+      "status": "read"
+    },
+    {
+      "id": "learning-how-to-learn",
+      "title": "Learning How to Learn",
+      "author": "Barbara Oakley and Terrence Sejnowski",
+      "topic": "Learning",
+      "status": "read"
+    },
+    {
+      "id": "peak",
+      "title": "Peak",
+      "author": "Anders Ericsson and Robert Pool",
+      "topic": "Learning",
+      "status": "read"
+    },
+    {
+      "id": "how-we-learn",
+      "title": "How We Learn",
+      "author": "Benedict Carey",
+      "topic": "Learning",
+      "status": "read"
+    },
+    {
+      "id": "leaders-eat-last",
+      "title": "Leaders Eat Last",
+      "author": "Simon Sinek",
+      "topic": "Leadership",
+      "status": "read"
+    },
+    {
+      "id": "the-culture-code",
+      "title": "The Culture Code",
+      "author": "Daniel Coyle",
+      "topic": "Leadership",
+      "status": "read"
+    },
+    {
+      "id": "built-to-last",
+      "title": "Built to Last",
+      "author": "Jim Collins and Jerry I. Porras",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "good-to-great",
+      "title": "Good to Great",
+      "author": "Jim Collins",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "how-the-mighty-fall",
+      "title": "How the Mighty Fall",
+      "author": "Jim Collins",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "purple-cow",
+      "title": "Purple Cow",
+      "author": "Seth Godin",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "onward",
+      "title": "Onward",
+      "author": "Howard Schultz and Joanne Gordon",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "crush-it",
+      "title": "Crush It!",
+      "author": "Gary Vaynerchuk",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "100m-offers",
+      "title": "$100M Offers",
+      "author": "Alex Hormozi",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-e-myth-revisited",
+      "title": "The E-Myth Revisited",
+      "author": "Michael E. Gerber",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-psychology-of-selling",
+      "title": "The Psychology of Selling",
+      "author": "Brian Tracy",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-hard-thing-about-hard-things",
+      "title": "The Hard Thing About Hard Things",
+      "author": "Ben Horowitz",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "principles",
+      "title": "Principles",
+      "author": "Ray Dalio",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "measure-what-matters",
+      "title": "Measure What Matters",
+      "author": "John Doerr",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "zero-to-one",
+      "title": "Zero to One",
+      "author": "Peter Thiel and Blake Masters",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-innovator-s-dilemma",
+      "title": "The Innovator’s Dilemma",
+      "author": "Clayton M. Christensen",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-lean-startup",
+      "title": "The Lean Startup",
+      "author": "Eric Ries",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "the-airbnb-story",
+      "title": "The Airbnb Story",
+      "author": "Leigh Gallagher",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "alibaba-the-house-that-jack-ma-built",
+      "title": "Alibaba: The House That Jack Ma Built",
+      "author": "Duncan Clark",
+      "topic": "Business",
+      "status": "read"
+    },
+    {
+      "id": "elon-musk",
+      "title": "Elon Musk",
+      "author": "Ashlee Vance",
+      "topic": "Biography",
+      "status": "read"
+    },
+    {
+      "id": "steve-jobs",
+      "title": "Steve Jobs",
+      "author": "Walter Isaacson",
+      "topic": "Biography",
+      "status": "read"
+    },
+    {
+      "id": "the-snowball",
+      "title": "The Snowball",
+      "author": "Alice Schroeder",
+      "topic": "Biography",
+      "status": "read"
+    },
+    {
+      "id": "ai-2041",
+      "title": "AI 2041",
+      "author": "Kai-Fu Lee and Chen Qiufan",
+      "topic": "Technology",
+      "status": "read"
     }
   ],
   "certificates": [
