@@ -540,7 +540,7 @@ window.SITE = {
       "author": "Tony Robbins",
       "topic": "Finance",
       "status": "read",
-      "cover": "https://www.google.com/imgres?q=Money%3A%20Master%20the%20Game&imgurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F813oUiL0bLL._AC_UF1000%2C1000_QL80_.jpg&imgrefurl=https%3A%2F%2Fwww.amazon.eg%2F%25D9%2583%25D8%25AA%25D8%25A7%25D8%25A8-Money-Master-Game-Financial%2Fdp%2F147114335X&docid=Eij-nUen819ZTM&tbnid=Ea7X2vQ1neyurM&vet=12ahUKEwi-mNe21qSYAxW6hP0HHZO2OW8QnPAOegQIOhAA..i&w=638&h=1000&hcb=2&ved=2ahUKEwi-mNe21qSYAxW6hP0HHZO2OW8QnPAOegQIOhAA"
+      "cover": "https://m.media-amazon.com/images/I/813oUiL0bLL._AC_UF1000,1000_QL80_.jpg"
     },
     {
       "id": "influence-the-psychology-of-persuasion",
