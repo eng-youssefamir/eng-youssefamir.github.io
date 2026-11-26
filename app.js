@@ -30,7 +30,7 @@
   var STATE = { 'done': 'Done', 'in-progress': 'In progress', 'next': 'Next', 'later': 'Later' };
   var BOOK_STATUS = { reading: 'Reading', read: 'Read', next: 'Up next' };
   var COVER_COLORS = ['#7B1E36', '#1F4FD1', '#0B7A75', '#B85C12', '#6B3FB8', '#C2307F', '#1F8A5F', '#222B33', '#8A5A2B', '#0E86B0'];
-  var PAGE_COLORS = { index: '#7B1E36', about: '#0B7A75', projects: '#2B55D6', library: '#B85C12', blog: '#6B3FB8', certificates: '#1F8A5F', community: '#C2307F', contact: '#0E86B0', log: '#D1435B', services: '#9A6B00' };
+  var PAGE_COLORS = { index: '#7B1E36', about: '#0B7A75', projects: '#2B55D6', library: '#B85C12', blog: '#6B3FB8', certificates: '#1F8A5F', contact: '#0E86B0', log: '#D1435B', services: '#9A6B00' };
 
   /* ---------- helpers ---------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -123,7 +123,7 @@
     if (!host) return;
     var L = S.links;
     var links = [['LinkedIn', L.linkedin], ['GitHub', L.github]];
-    var internal = [['Blog', 'blog.html'], ['Community', 'community.html'], ['Résumé', 'cv.html']];
+    var internal = [['Blog', 'blog.html'], ['Résumé', 'cv.html']];
     if (L.youtube) links.push(['YouTube', L.youtube]);
     host.append(h('div', { class: 'wrap foot' },
       h('div', {},
@@ -481,22 +481,6 @@
     });
   };
 
-  PAGES.community = function () {
-    var L = S.links;
-    var yt = $('#yt-action');
-    if (yt) {
-      if (L.youtube) yt.append(h('a', Object.assign({ class: 'btn btn-primary' }, ext(L.youtube)), 'Watch on YouTube'));
-      else yt.append(h('a', { class: 'btn btn-primary', href: 'mailto:' + S.email + '?subject=' + encodeURIComponent('Notify me: channel launch') }, 'Tell me when it starts'),
-        h('span', { class: 'muted small', text: 'No spam. One email when the first video is out.' }));
-    }
-    var cm = $('#cm-action');
-    if (cm) {
-      if (L.community) cm.append(h('a', Object.assign({ class: 'btn btn-primary' }, ext(L.community)), 'Join the community'));
-      else cm.append(h('a', { class: 'btn btn-primary', href: 'mailto:' + S.email + '?subject=' + encodeURIComponent('Community waitlist') }, 'Join the waitlist'),
-        h('span', { class: 'muted small', text: 'You will get one email when the doors open.' }));
-    }
-  };
-
   PAGES.contact = function () {
     var mail = $('#mail');
     if (mail) {
@@ -778,7 +762,7 @@
     if ($('.pal')) return;
     var last = document.activeElement, sel = 0, shown = [];
     var items = NAV.map(function (n) { return { label: n[0], hint: 'Page', href: n[1] === 'index' ? 'index.html' : n[1] + '.html' }; });
-    items.push({ label: 'CV', hint: 'Page', href: 'cv.html' }, { label: 'Community', hint: 'Page', href: 'community.html' });
+    items.push({ label: 'CV', hint: 'Page', href: 'cv.html' });
     S.books.forEach(function (b) { items.push({ label: b.title, hint: 'Book, ' + (b.author || ''), href: 'library.html?q=' + encodeURIComponent(b.title), text: [b.title, b.author, b.topic].join(' ') }); });
     S.projects.forEach(function (p) { items.push({ label: p.title, hint: 'Project', href: 'projects.html' }); });
     S.certificates.forEach(function (c) { items.push({ label: c.title, hint: 'Certificate', href: 'certificates.html' }); });

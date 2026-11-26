@@ -242,9 +242,7 @@
         { type: 'photo', title: 'الصورة الشخصية' },
         { type: 'fields', title: 'الروابط', fields: [
           { k: 'links.linkedin', label: 'LinkedIn', t: 'text', ltr: true },
-          { k: 'links.github', label: 'GitHub', t: 'text', ltr: true },
-          { k: 'links.youtube', label: 'قناة YouTube', t: 'text', ltr: true, help: 'اتركه فارغاً حتى تُنشأ القناة. حين تضيفه يتحول زر صفحة المجتمع إلى "Watch on YouTube".' },
-          { k: 'links.community', label: 'رابط المجتمع', t: 'text', ltr: true, help: 'اتركه فارغاً حتى يُفتح المجتمع. حين تضيفه يتحول الزر إلى "Join the community".' }
+          { k: 'links.github', label: 'GitHub', t: 'text', ltr: true }
         ] },
         { type: 'fields', title: 'إحصاءات الزوار (اختياري)', fields: [
           { k: 'analytics.goatcounter', label: 'رمز GoatCounter', t: 'text', ltr: true, help: 'أنشئ حساباً مجانياً على goatcounter.com واختر اسماً (مثل youssefamir)، ثم اكتب هذا الاسم هنا فقط. يعرض لك عدد الزوار وبلدانهم دون ملفات تعريف ارتباط.' }
@@ -764,7 +762,7 @@
   /* ---------- the blog: write, preview, publish ---------- */
   var postDirty = false;
   var BASE_URL = 'https://' + REPO;
-  var SITE_PAGES = ['', 'about', 'projects', 'services', 'log', 'library', 'blog', 'certificates', 'community', 'contact', 'cv'];
+  var SITE_PAGES = ['', 'about', 'projects', 'services', 'log', 'library', 'blog', 'certificates', 'contact', 'cv'];
   var FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Cairo:wght@400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap';
   var FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%237B1E36'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='27' text-anchor='middle' fill='%23FBF3F5'%3EYA%3C/text%3E%3C/svg%3E";
 
