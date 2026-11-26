@@ -675,7 +675,8 @@ window.SITE = {
       "title": "How to Develop Self-Confidence and Influence People by Public Speaking",
       "author": "Dale Carnegie",
       "topic": "Communication",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuwnYOYhPZ4yqGqzQ4g489dOLCCynl2vJ5pu5necHm1Q&s=10"
     },
     {
       "id": "talk-like-ted",
