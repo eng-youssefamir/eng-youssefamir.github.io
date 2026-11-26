@@ -727,7 +727,9 @@
   }
 
   function pageLinks() {
-    window.addEventListener('pageshow', function () { document.body.classList.remove('leaving'); });
+    var root = document.documentElement;
+    window.addEventListener('pageshow', function () { root.classList.remove('wipe-leave'); document.body.classList.remove('leaving'); });
+    if (root.classList.contains('wipe-in')) setTimeout(function () { root.classList.remove('wipe-in'); }, 1100);
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]');
       if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
@@ -736,8 +738,9 @@
       if (u.origin !== location.origin || u.pathname === location.pathname || !/\.html$|\/$/.test(u.pathname)) return;
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       e.preventDefault();
-      document.body.classList.add('leaving');
-      setTimeout(function () { location.href = u.href; }, 170);
+      try { sessionStorage.setItem('wipe', '1'); } catch (x) { /* fine */ }
+      root.classList.add('wipe-leave');
+      setTimeout(function () { location.href = u.href; }, 520);
     });
   }
 
@@ -832,7 +835,11 @@
     var cv = document.createElement('canvas');
     cv.className = 'bg-net'; cv.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(cv, document.body.firstChild);
-    var cx = cv.getContext('2d'), W = 0, H = 0, dpr = 1, nodes = [], packets = [], mouse = { x: -999, y: -999, on: false };
+    var mesh = document.createElement('div');
+    mesh.className = 'bg-mesh'; mesh.setAttribute('aria-hidden', 'true');
+    mesh.innerHTML = '<i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i><i class="grid"></i>';
+    document.body.insertBefore(mesh, document.body.firstChild);
+    var cx = cv.getContext('2d'), W = 0, H = 0, dpr = 1, nodes = [], packets = [], pulses = [], waves = [], mouse = { x: -999, y: -999, on: false }, scrollY0 = 0;
     var cols = { a: '#7B1E36', b: '#D99A1E', dark: false };
     function readColors() {
       var cs = getComputedStyle(document.body);
@@ -852,12 +859,14 @@
       cx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var n = Math.max(22, Math.min(70, Math.round(W * H / 22000)));
       nodes = [];
-      for (var i = 0; i < n; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28, r: 1.4 + Math.random() * 1.8, k: Math.random() < .3 ? 1 : 0 });
+      for (var i = 0; i < n; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28, r: 1.4 + Math.random() * 1.8, k: Math.random() < .3 ? 1 : 0, z: .4 + Math.random() * .9, oy: 0 });
     }
     var LINK = 150;
     function frame() {
       cx.clearRect(0, 0, W, H);
-      var i, j, a, b, d, links = [];
+      var i, j, a, b, d, links = [], sy = window.pageYOffset || 0;
+      var ds = sy - scrollY0; scrollY0 = sy;
+      if (ds && !calm) for (i = 0; i < nodes.length; i++) { nodes[i].y -= ds * nodes[i].z * .18; }
       for (i = 0; i < nodes.length; i++) {
         a = nodes[i];
         if (!calm) { a.x += a.vx; a.y += a.vy; }
@@ -887,14 +896,35 @@
         cx.beginPath(); cx.arc(a.x, a.y, a.r, 0, 6.2832); cx.fill();
       }
       if (!calm) {
-        if (links.length && packets.length < 9 && Math.random() < .05) { var l = links[(Math.random() * links.length) | 0]; packets.push({ a: l[0], b: l[1], t: 0, s: .012 + Math.random() * .014 }); }
+        if (links.length && packets.length < 12 && Math.random() < .07) { var l = links[(Math.random() * links.length) | 0]; packets.push({ a: l[0], b: l[1], t: 0, s: .012 + Math.random() * .014 }); }
         for (i = packets.length - 1; i >= 0; i--) {
           var p = packets[i]; p.t += p.s;
           if (p.t >= 1) { packets.splice(i, 1); continue; }
           var px = p.a.x + (p.b.x - p.a.x) * p.t, py = p.a.y + (p.b.y - p.a.y) * p.t;
-          var g = cx.createRadialGradient(px, py, 0, px, py, 10);
-          g.addColorStop(0, rgba(cols.b, .95)); g.addColorStop(1, rgba(cols.b, 0));
-          cx.fillStyle = g; cx.beginPath(); cx.arc(px, py, 10, 0, 6.2832); cx.fill();
+          var tx = p.a.x + (p.b.x - p.a.x) * Math.max(0, p.t - .18), ty = p.a.y + (p.b.y - p.a.y) * Math.max(0, p.t - .18);
+          var lg = cx.createLinearGradient(tx, ty, px, py);
+          lg.addColorStop(0, rgba(cols.b, 0)); lg.addColorStop(1, rgba(cols.b, .9));
+          cx.strokeStyle = lg; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(tx, ty); cx.lineTo(px, py); cx.stroke();
+          var g = cx.createRadialGradient(px, py, 0, px, py, 11);
+          g.addColorStop(0, rgba(cols.b, 1)); g.addColorStop(1, rgba(cols.b, 0));
+          cx.fillStyle = g; cx.beginPath(); cx.arc(px, py, 11, 0, 6.2832); cx.fill();
+          if (p.t > .97 && Math.random() < .6) pulses.push({ x: p.b.x, y: p.b.y, r: 2, k: p.b.k });
+        }
+      }
+      for (i = pulses.length - 1; i >= 0; i--) {
+        var pu = pulses[i]; pu.r += .9;
+        if (pu.r > 34) { pulses.splice(i, 1); continue; }
+        cx.strokeStyle = rgba(pu.k ? cols.b : cols.a, (1 - pu.r / 34) * .7); cx.lineWidth = 1.2;
+        cx.beginPath(); cx.arc(pu.x, pu.y, pu.r, 0, 6.2832); cx.stroke();
+      }
+      for (i = waves.length - 1; i >= 0; i--) {
+        var w = waves[i]; w.r += 7;
+        if (w.r > 520) { waves.splice(i, 1); continue; }
+        cx.strokeStyle = rgba(cols.a, (1 - w.r / 520) * .55); cx.lineWidth = 2;
+        cx.beginPath(); cx.arc(w.x, w.y, w.r, 0, 6.2832); cx.stroke();
+        for (j = 0; j < nodes.length; j++) {
+          var n = nodes[j], dn = Math.hypot(n.x - w.x, n.y - w.y);
+          if (Math.abs(dn - w.r) < 14 && dn > 1) { n.x += (n.x - w.x) / dn * 5; n.y += (n.y - w.y) / dn * 5; }
         }
       }
       if (mouse.on) {
@@ -912,6 +942,7 @@
     window.addEventListener('resize', function () { size(); frame(); });
     window.addEventListener('pointermove', function (e) { if (e.pointerType === 'touch') return; mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true; });
     document.addEventListener('pointerleave', function () { mouse.on = false; });
+    document.addEventListener('pointerdown', function (e) { if (!calm && e.clientY < H) waves.push({ x: e.clientX, y: e.clientY, r: 4 }); });
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
     new MutationObserver(function () { readColors(); if (calm) frame(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 

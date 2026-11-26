@@ -674,3 +674,35 @@ html { background: var(--bg); }
 @keyframes ripple { to { transform: scale(26); opacity: 0; } }
 .tilting { transition: transform .12s ease-out !important; will-change: transform; }
 @media print { .bg-net { display: none; } html { background: #fff; } }
+
+/* ---------- colour mesh: overlapping colours that drift, with a faint engineering grid ---------- */
+.bg-mesh { position: fixed; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
+.bg-mesh i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .42; will-change: transform; }
+[data-theme="dark"] .bg-mesh i { opacity: .3; }
+.bg-mesh .b1 { width: 52vmax; height: 52vmax; left: -14vmax; top: -16vmax; background: var(--accent); animation: blob1 26s ease-in-out infinite alternate; }
+.bg-mesh .b2 { width: 46vmax; height: 46vmax; right: -12vmax; top: 4vmax; background: var(--accent-2); animation: blob2 31s ease-in-out infinite alternate; }
+.bg-mesh .b3 { width: 44vmax; height: 44vmax; left: 18vw; bottom: -22vmax; background: var(--c3); animation: blob3 35s ease-in-out infinite alternate; }
+.bg-mesh .b4 { width: 34vmax; height: 34vmax; right: 8vw; bottom: -10vmax; background: var(--c2); animation: blob4 29s ease-in-out infinite alternate; opacity: .3; }
+.bg-mesh .grid { inset: 0; width: auto; height: auto; border-radius: 0; filter: none; opacity: .5; will-change: auto;
+  background-image: linear-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 30%, #000, transparent 85%); mask-image: radial-gradient(70% 60% at 50% 30%, #000, transparent 85%); }
+@keyframes blob1 { to { transform: translate3d(22vw, 18vh, 0) scale(1.15); } }
+@keyframes blob2 { to { transform: translate3d(-24vw, 26vh, 0) scale(.9); } }
+@keyframes blob3 { to { transform: translate3d(26vw, -22vh, 0) scale(1.2); } }
+@keyframes blob4 { to { transform: translate3d(-30vw, -18vh, 0) scale(1.1); } }
+main::before { display: none; }
+@media (prefers-reduced-motion: reduce) { .bg-mesh i { animation: none; } }
+@media print { .bg-mesh { display: none; } }
+
+/* ---------- page change: a slanted colour curtain ---------- */
+html::after { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 115vh; z-index: 9999; pointer-events: none;
+  background: linear-gradient(115deg, #7B1E36 0%, #D1435B 28%, #D99A1E 52%, #2B55D6 76%, #0B7A75 100%);
+  clip-path: polygon(0 7%, 100% 0, 100% 100%, 0 100%); transform: translateY(105%); }
+html.wipe-leave::after { animation: curtain-in .52s cubic-bezier(.7, 0, .3, 1) forwards; }
+html.wipe-in::after { transform: translateY(0); animation: curtain-out .75s .08s cubic-bezier(.7, 0, .3, 1) forwards; }
+html.wipe-in body { animation: none; }
+@keyframes curtain-in { from { transform: translateY(105%); } to { transform: translateY(0); } }
+@keyframes curtain-out { from { transform: translateY(0); } to { transform: translateY(-110%); } }
+@media (prefers-reduced-motion: reduce) { html::after { display: none; } }
+@media print { html::after { display: none; } }

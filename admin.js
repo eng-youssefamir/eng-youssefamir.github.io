@@ -816,7 +816,7 @@
       '<meta property="og:image" content="' + E(img) + '">\n<meta property="article:published_time" content="' + E(m.date) + '">\n<meta name="twitter:card" content="summary_large_image">\n' +
       '<link rel="alternate" type="application/rss+xml" title="Youssef Amir" href="feed.xml">\n<meta name="theme-color" content="#7B1E36">\n' +
       '<link rel="icon" href="' + FAVICON + '">\n' +
-      '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
+      '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t;if(sessionStorage.getItem(\'wipe\')){sessionStorage.removeItem(\'wipe\');document.documentElement.classList.add(\'wipe-in\')}}catch(e){}</script>\n' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
       '<link rel="stylesheet" href="style.css?v=202611262230">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262230" defer></script>\n</head>\n' +
       '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +
@@ -943,13 +943,9 @@
     });
     syncKind();
 
-    var names = {};
-    idx.forEach(function (p) { if (p.series && p.series.name) names[p.series.name] = 1; });
-    (data.books || []).forEach(function (b) { if (b.series && b.series.title) names[b.series.title] = 1; });
-    var dl = h('datalist', { id: 'serieslist' }, Object.keys(names).map(function (n) { return h('option', { value: n }); }));
-    var serName = h('input', { type: 'text', list: 'serieslist', dir: 'auto', placeholder: 'اسم السلسلة' });
+    var serName = h('input', { type: 'text', dir: 'auto', autocomplete: 'off', placeholder: 'اسم السلسلة' });
     serName.value = post.series ? post.series.name || '' : '';
-    var serOrd = h('input', { type: 'number', min: '1', dir: 'ltr', placeholder: 'رقم الجزء (1، 2، 3…)' });
+    var serOrd = h('input', { type: 'number', min: '1', dir: 'ltr', autocomplete: 'off', placeholder: 'رقم الجزء (1، 2، 3…)' });
     serOrd.value = post.series && post.series.order ? post.series.order : '';
     function syncSeries() { post.series = serName.value.trim() ? { name: serName.value.trim(), order: serOrd.value ? Number(serOrd.value) : undefined } : null; touch(); }
     serName.addEventListener('input', syncSeries); serOrd.addEventListener('input', syncSeries);
@@ -1117,7 +1113,7 @@
       fieldWrap('رابط المقال (Slug)', slugIn, 'حروف إنجليزية صغيرة وشرطات، مثل my-first-post. يُحدَّد تلقائياً، ولا يتغير بعد الحفظ.', false),
       fieldWrap('نوع المقال', kindSel, 'المقال الشخصي لا يُربط بأي كتاب، ويظهر بوسم «مقال شخصي» في البطاقة وفي صفحة المقال.', true),
       bookField,
-      h('div', { class: 'field wide' }, h('label', { text: 'السلسلة' }), h('div', { class: 'coverrow' }, serName, serOrd), dl,
+      h('div', { class: 'field wide' }, h('label', { text: 'السلسلة' }), h('div', { class: 'coverrow' }, serName, serOrd),
         h('span', { class: 'help', text: 'اكتب اسم السلسلة ثم رقم الجزء. المقالات التي تحمل الاسم نفسه تتجمع تلقائياً مع أزرار السابق والتالي.' })),
       fieldWrap('وسوم (افصل بفاصلة)', tags, null, true),
       fieldWrap('ملخص قصير (اختياري)', excerpt, 'يظهر في البطاقات وعند المشاركة. إن تركته فارغاً يؤخذ من بداية المقال.', true),
