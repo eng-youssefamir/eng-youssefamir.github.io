@@ -591,7 +591,8 @@ window.SITE = {
       "title": "The ONE Thing",
       "author": "Gary Keller and Jay Papasan",
       "topic": "Productivity",
-      "status": "read"
+      "status": "read",
+      "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwtp_szSOslN8ZqmYgE2Dk7DB1PI-nMbQ61GXF0UAsfw&s=10"
     },
     {
       "id": "first-things-first",
