@@ -315,6 +315,7 @@
       id: 'books', label: 'الكتب',
       intro: 'كل كتاب قرأته أو تقرؤه. غيّر الحالة إلى "أقرؤه الآن" ليظهر في الصفحة الرئيسية تلقائياً.',
       blocks: [
+        { type: 'import', title: 'استيراد كتب جاهزة' },
         { type: 'list', title: 'المكتبة', path: 'books', newLabel: 'كتاب جديد', addLabel: 'إضافة كتاب', addTop: true, search: true,
           itemTitle: function (it) { return it.title; },
           itemMeta: function (it) { return (STATUS_LABEL[it.status] || '') + (it.author ? ' · ' + it.author : ''); },
@@ -338,6 +339,10 @@
               ] }
           ], blank: function () { return { id: '', title: '', author: '', status: 'read', topic: '' }; } }
       ]
+    },
+    {
+      id: 'blog', label: 'المدونة', custom: true,
+      intro: 'اكتب مقالاتك وانشرها من هنا بالعربية أو الإنجليزية. المسودات تُحفظ في مستودعك العام على GitHub، فلا تكتب فيها شيئاً سرياً.'
     },
     {
       id: 'certs', label: 'الشهادات والتعليم',
@@ -641,6 +646,31 @@
     return box;
   }
 
+  /* ---------- import ready-made books ---------- */
+  function normTitle(t) { return String(t || '').toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g, ''); }
+  function importBlock(container) {
+    var pack = window.BOOK_PACK || [];
+    var msg = h('p', { class: 'help' });
+    function missing() {
+      var have = {};
+      (data.books || []).forEach(function (b) { have[normTitle(b.title)] = true; });
+      return pack.filter(function (r) { return !have[normTitle(r[0])]; });
+    }
+    var todo = missing();
+    container.append(h('p', { class: 'block-help', text: 'قائمة فيها ' + pack.length + ' من أشهر الكتب. يُضاف منها فقط ما ليس عندك، ولا يتكرر أي كتاب موجود. يبقى لك أن تحذف أي كتاب غير مقروء أو تغيّر حالته.' }));
+    var btn = h('button', { class: 'btn btn-ghost btn-sm', type: 'button', onclick: function () {
+      var list = missing();
+      if (!list.length) { msg.textContent = 'كل كتب القائمة موجودة عندك بالفعل.'; return; }
+      var read = window.confirm('سيُضاف ' + list.length + ' كتاباً.\n\nموافق: تُضاف على أنها مقروءة.\nإلغاء: تُضاف على أنها "التالي" لتعدّل حالة ما قرأته بنفسك.');
+      ensureArray(data, 'books');
+      list.forEach(function (r) { data.books.push({ id: '', title: r[0], author: r[1], topic: r[2], status: read ? 'read' : 'next' }); });
+      markDirty();
+      renderPanel();
+      setState('أُضيف ' + list.length + ' كتاباً. راجع حالتها ثم اضغط "حفظ التغييرات". الأغلفة تُجلب تلقائياً.', 'dirty');
+    } }, 'إضافة الكتب الناقصة (' + todo.length + ')');
+    container.append(h('div', { class: 'actions' }, btn, msg));
+  }
+
   /* ---------- list editor ---------- */
   function listEditor(def, root, path, container) {
     var arr = ensureArray(root, path);
@@ -740,12 +770,373 @@
         h('span', { class: 'help', text: 'الأفضل صورة عمودية واضحة للوجه. تُضبط الأبعاد تلقائياً.' }))));
   }
 
+  /* ---------- the blog: write, preview, publish ---------- */
+  var postDirty = false;
+  var BASE_URL = 'https://' + REPO;
+  var SITE_PAGES = ['', 'about', 'projects', 'services', 'log', 'library', 'blog', 'certificates', 'community', 'contact', 'cv'];
+  var FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Cairo:wght@400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap';
+  var FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%237B1E36'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='27' text-anchor='middle' fill='%23FBF3F5'%3EYA%3C/text%3E%3C/svg%3E";
+
+  function ghFile(path) {
+    return gh('/contents/' + path + '?ref=' + BRANCH).then(function (j) {
+      return { sha: j.sha, text: j.content ? fromB64(j.content) : '' };
+    }, function (e) { if (e.status === 404) return null; throw e; });
+  }
+  function putText(path, text, msg) {
+    return ghFile(path).then(function (f) {
+      var body = { message: msg, content: toB64(text), branch: BRANCH };
+      if (f) body.sha = f.sha;
+      return gh('/contents/' + path, { method: 'PUT', body: body });
+    });
+  }
+  function delFile(path, msg) {
+    return ghFile(path).then(function (f) {
+      if (!f) return null;
+      return gh('/contents/' + path, { method: 'DELETE', body: { message: msg, sha: f.sha, branch: BRANCH } });
+    });
+  }
+  function loadIndex() {
+    return ghFile('posts/index.json').then(function (f) {
+      if (!f) return [];
+      try { var a = JSON.parse(f.text); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    });
+  }
+  function sortIdx(a) { return a.sort(function (x, y) { return String(y.date || '').localeCompare(String(x.date || '')); }); }
+  function todayStr() { return new Date().toISOString().slice(0, 10); }
+  function isoBase(p) { return /^https?:/i.test(p) ? p : BASE_URL + '/' + String(p).replace(/^\//, ''); }
+
+  function postHtml(m, bodyMd) {
+    var E = MD.esc, ar = m.lang === 'ar';
+    var url = BASE_URL + '/posts/' + m.slug + '.html';
+    var img = m.cover ? isoBase(m.cover) : BASE_URL + '/og.jpg';
+    var d = new Date(m.date + 'T12:00:00');
+    var dateTxt = '';
+    try { dateTxt = new Intl.DateTimeFormat(ar ? 'ar-u-nu-latn' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(d); } catch (e) { dateTxt = m.date; }
+    var mins = m.mins || 1;
+    var minTxt = ar ? (mins === 1 ? 'قراءة في دقيقة' : mins === 2 ? 'قراءة في دقيقتين' : 'قراءة في ' + mins + ' دقائق') : mins + ' min read';
+    var tags = (m.tags || []).map(function (t) { return '<span class="chip-s chip-tag">' + E(t) + '</span>'; }).join('');
+    var data = JSON.stringify({ slug: m.slug, title: m.title, lang: m.lang, date: m.date, tags: m.tags || [], book: m.book || '', series: m.series || null }).replace(/</g, '\\u003c');
+    var title = m.title + ' | Youssef Amir';
+    return '<!DOCTYPE html>\n<html lang="en" data-theme="light">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n<base href="/">\n' +
+      '<title>' + E(title) + '</title>\n<meta name="description" content="' + E(m.excerpt) + '">\n' +
+      '<link rel="canonical" href="' + url + '">\n<meta property="og:type" content="article">\n<meta property="og:site_name" content="Youssef Amir">\n' +
+      '<meta property="og:title" content="' + E(m.title) + '">\n<meta property="og:description" content="' + E(m.excerpt) + '">\n<meta property="og:url" content="' + url + '">\n' +
+      '<meta property="og:image" content="' + E(img) + '">\n<meta property="article:published_time" content="' + E(m.date) + '">\n<meta name="twitter:card" content="summary_large_image">\n' +
+      '<link rel="alternate" type="application/rss+xml" title="Youssef Amir" href="feed.xml">\n<meta name="theme-color" content="#7B1E36">\n' +
+      '<link rel="icon" href="' + FAVICON + '">\n' +
+      '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
+      '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
+      '<link rel="stylesheet" href="style.css?v=202611262100">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262100" defer></script>\n</head>\n' +
+      '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +
+      '<div class="wrap">\n<article class="article" lang="' + (ar ? 'ar' : 'en') + '" dir="' + (ar ? 'rtl' : 'ltr') + '">\n' +
+      '<header>\n<p class="post-kicker" id="post-kicker"></p>\n<h1 dir="auto">' + E(m.title) + '</h1>\n' +
+      '<p class="post-meta"><time datetime="' + E(m.date) + '">' + E(dateTxt) + '</time><span>' + E(minTxt) + '</span></p>\n' +
+      (tags ? '<p class="tagrow">' + tags + '</p>\n' : '') +
+      (m.cover ? '<figure class="post-cover"><img src="' + E(m.cover) + '" alt=""></figure>\n' : '') + '</header>\n' +
+      '<div class="post-body">\n' + MD.render(bodyMd) + '\n</div>\n<footer id="post-foot"></footer>\n</article>\n</div>\n</main>\n' +
+      '<footer class="site-footer" id="site-footer"></footer>\n<script type="application/json" id="post-data">' + data + '</script>\n' +
+      '<noscript><p class="wrap">This site uses a little JavaScript for the menu. Please turn it on to see everything.</p></noscript>\n</body>\n</html>\n';
+  }
+
+  function feedXml(idx) {
+    var E = MD.esc;
+    var items = sortIdx(idx.filter(function (p) { return !p.draft; })).slice(0, 30).map(function (p) {
+      var u = BASE_URL + '/posts/' + p.slug + '.html';
+      return '<item><title>' + E(p.title) + '</title><link>' + u + '</link><guid>' + u + '</guid><pubDate>' + new Date(p.date + 'T12:00:00Z').toUTCString() + '</pubDate><description>' + E(p.excerpt || '') + '</description></item>';
+    }).join('\n');
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Youssef Amir</title><link>' + BASE_URL + '/blog</link><description>Writing in Arabic and English on books, psychology, self-development, and learning platform engineering.</description>\n' + items + '\n</channel></rss>\n';
+  }
+  function sitemapXml(idx) {
+    var day = todayStr(), rows = SITE_PAGES.map(function (pg) { return '  <url><loc>' + BASE_URL + '/' + pg + '</loc><lastmod>' + day + '</lastmod></url>'; });
+    idx.filter(function (p) { return !p.draft; }).forEach(function (p) { rows.push('  <url><loc>' + BASE_URL + '/posts/' + p.slug + '.html</loc><lastmod>' + p.date + '</lastmod></url>'); });
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows.join('\n') + '\n</urlset>\n';
+  }
+
+  function blogPanel(panel) {
+    var box = h('div', { class: 'blogbox' });
+    panel.append(box);
+    box.append(h('p', { class: 'muted', text: 'يحمّل المقالات…' }));
+    loadIndex().then(function (idx) { blogList(box, idx); }, function (e) {
+      box.textContent = '';
+      box.append(h('p', { class: 'msg', text: 'تعذّر تحميل المقالات: ' + e.message }));
+    });
+  }
+
+  function blogList(box, idx) {
+    box.textContent = '';
+    postDirty = false;
+    sortIdx(idx);
+    var top = h('div', { class: 'blog-top' },
+      h('button', { class: 'btn btn-primary btn-sm', type: 'button', onclick: function () { blogEditor(box, idx, null); } }, '+ مقال جديد'),
+      h('a', { class: 'textlink', href: 'blog.html', target: '_blank', rel: 'noopener', text: 'فتح صفحة المدونة' }));
+    box.append(top);
+    if (!idx.length) { box.append(h('p', { class: 'list-empty', text: 'لا توجد مقالات بعد. اضغط "مقال جديد" لتكتب أول مقال.' })); return; }
+    var list = h('div', { class: 'list' });
+    idx.forEach(function (p) {
+      list.append(h('div', { class: 'card' }, h('div', { class: 'card-head' },
+        h('button', { class: 'card-toggle', type: 'button', onclick: function () { openPost(box, idx, p.slug); } },
+          h('span', { class: 'card-title', dir: 'auto', text: p.title }),
+          h('span', { class: 'card-meta', text: (p.draft ? 'مسودة' : 'منشور') + ' · ' + p.date + ' · ' + (p.lang === 'ar' ? 'عربي' : 'English') })),
+        h('div', { class: 'card-acts' },
+          p.draft ? null : h('a', { class: 'mini-btn', href: 'posts/' + p.slug + '.html', target: '_blank', rel: 'noopener', 'aria-label': 'عرض المقال', title: 'عرض' }, '↗'),
+          h('button', { class: 'mini-btn', type: 'button', 'aria-label': 'تعديل', onclick: function () { openPost(box, idx, p.slug); } }, '✎')))));
+    });
+    box.append(list);
+  }
+
+  function openPost(box, idx, slugName) {
+    box.textContent = '';
+    box.append(h('p', { class: 'muted', text: 'يفتح المقال…' }));
+    ghFile('posts/src/' + slugName + '.json').then(function (f) {
+      if (!f) throw new Error('لم أجد ملف المقال');
+      blogEditor(box, idx, JSON.parse(f.text));
+    }).catch(function (e) { box.textContent = ''; box.append(h('p', { class: 'msg', text: 'تعذّر فتح المقال: ' + e.message })); });
+  }
+
+  function blogEditor(box, idx, existing) {
+    var isNew = !existing;
+    var post = existing ? JSON.parse(JSON.stringify(existing)) : { slug: '', title: '', date: todayStr(), lang: 'ar', status: 'draft', cover: '', excerpt: '', tags: [], book: '', series: null, body: '' };
+    post.tags = post.tags || [];
+    postDirty = false;
+    function touch() { postDirty = true; }
+    box.textContent = '';
+
+    function fieldWrap(label, input, help, wide) {
+      var id = 'bf' + (++uid);
+      input.id = id;
+      return h('div', { class: 'field' + (wide ? ' wide' : '') }, h('label', { for: id, text: label }), input, help ? h('span', { class: 'help', text: help }) : null);
+    }
+    function txt(k, opts) {
+      opts = opts || {};
+      var i = h('input', { type: 'text', dir: opts.ltr ? 'ltr' : 'auto', spellcheck: opts.ltr ? 'false' : null });
+      i.value = post[k] == null ? '' : post[k];
+      i.addEventListener('input', function () { post[k] = i.value; touch(); if (opts.after) opts.after(); });
+      return i;
+    }
+
+    var title = txt('title');
+    var slugIn = txt('slug', { ltr: true });
+    if (!isNew) slugIn.readOnly = true;
+    title.addEventListener('blur', function () { if (isNew && !post.slug) { post.slug = autoSlug(); slugIn.value = post.slug; } });
+    function autoSlug() {
+      var s0 = slug(post.title);
+      return s0 && s0.length > 2 ? s0.slice(0, 60) : 'post-' + post.date.replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 5);
+    }
+
+    var lang = h('select', {}, h('option', { value: 'ar', text: 'العربية' }), h('option', { value: 'en', text: 'English' }));
+    lang.value = post.lang; lang.addEventListener('change', function () { post.lang = lang.value; touch(); preview(); });
+    var status = h('select', {}, h('option', { value: 'draft', text: 'مسودة (لا تظهر للزوار)' }), h('option', { value: 'published', text: 'منشور' }));
+    status.value = post.status === 'published' ? 'published' : 'draft';
+    status.addEventListener('change', function () { post.status = status.value; touch(); refreshBtn(); });
+    var date = h('input', { type: 'date', dir: 'ltr' });
+    date.value = post.date; date.addEventListener('input', function () { post.date = date.value; touch(); });
+    var excerpt = h('textarea', { rows: 3, dir: 'auto' });
+    excerpt.value = post.excerpt || ''; excerpt.addEventListener('input', function () { post.excerpt = excerpt.value; touch(); });
+    var tags = h('input', { type: 'text', dir: 'auto' });
+    tags.value = post.tags.join(', ');
+    tags.addEventListener('input', function () { post.tags = tags.value.split(/[,،]/).map(function (t) { return t.trim(); }).filter(Boolean); touch(); });
+
+    var bookSel = h('select', {}, h('option', { value: '', text: 'بدون كتاب' }));
+    (data.books || []).forEach(function (b) { bookSel.append(h('option', { value: b.id || slug(b.title), text: b.title })); });
+    bookSel.value = post.book || '';
+    if (post.book && bookSel.value !== post.book) { bookSel.append(h('option', { value: post.book, text: post.book })); bookSel.value = post.book; }
+    bookSel.addEventListener('change', function () { post.book = bookSel.value; touch(); });
+
+    var names = {};
+    idx.forEach(function (p) { if (p.series && p.series.name) names[p.series.name] = 1; });
+    (data.books || []).forEach(function (b) { if (b.series && b.series.title) names[b.series.title] = 1; });
+    var dl = h('datalist', { id: 'serieslist' }, Object.keys(names).map(function (n) { return h('option', { value: n }); }));
+    var serName = h('input', { type: 'text', list: 'serieslist', dir: 'auto', placeholder: 'اسم السلسلة' });
+    serName.value = post.series ? post.series.name || '' : '';
+    var serOrd = h('input', { type: 'number', min: '1', dir: 'ltr', placeholder: 'رقم الجزء (1، 2، 3…)' });
+    serOrd.value = post.series && post.series.order ? post.series.order : '';
+    function syncSeries() { post.series = serName.value.trim() ? { name: serName.value.trim(), order: serOrd.value ? Number(serOrd.value) : undefined } : null; touch(); }
+    serName.addEventListener('input', syncSeries); serOrd.addEventListener('input', syncSeries);
+
+    /* cover */
+    var coverPrev = h('img', { class: 'coverprev wide-prev', alt: '', hidden: !post.cover });
+    if (post.cover) coverPrev.src = post.cover;
+    var coverFile = h('input', { type: 'file', accept: 'image/*', 'aria-label': 'رفع صورة الغلاف' });
+    var coverMsg = h('span', { class: 'help' });
+    function needSlug() { if (!post.slug) { post.slug = autoSlug(); slugIn.value = post.slug; } }
+    coverFile.addEventListener('change', function () {
+      var f = coverFile.files[0]; if (!f) return;
+      needSlug();
+      var path = 'posts/img/' + post.slug + '-cover-' + Date.now().toString(36) + '.jpg';
+      coverMsg.textContent = 'يرفع الصورة…';
+      uploadImage(f, path, 1600).then(function () {
+        post.cover = path; coverPrev.src = path; coverPrev.hidden = false; touch();
+        coverMsg.textContent = 'رُفعت صورة الواجهة.';
+      }).catch(function (e) { coverMsg.textContent = 'تعذّر الرفع: ' + e.message; });
+    });
+    var coverRemove = h('button', { class: 'linkbtn', type: 'button', onclick: function () { post.cover = ''; coverPrev.hidden = true; touch(); } }, 'إزالة الصورة');
+
+    /* body + toolbar + preview */
+    var body = h('textarea', { class: 'editor-area', rows: 22, dir: 'auto', spellcheck: 'true', placeholder: 'اكتب مقالك هنا…' });
+    body.value = post.body || '';
+    var pv = h('div', { class: 'post-body editor-preview', hidden: true });
+    var mode = 'write';
+    function preview() {
+      pv.setAttribute('lang', post.lang); pv.setAttribute('dir', post.lang === 'ar' ? 'rtl' : 'ltr');
+      pv.className = 'post-body editor-preview article-' + post.lang;
+      pv.innerHTML = MD.render(post.body) || '<p class="muted">لا يوجد نص بعد.</p>';
+    }
+    body.addEventListener('input', function () { post.body = body.value; touch(); updateCount(); });
+    var count = h('span', { class: 'help' });
+    function updateCount() { var w = MD.plain(post.body).split(' ').filter(Boolean).length; count.textContent = w + ' كلمة، نحو ' + MD.readMins(post.body) + ' دقيقة قراءة'; }
+    updateCount();
+
+    function wrapSel(before, after, ph) {
+      var a = body.selectionStart, b = body.selectionEnd, v = body.value, sel = v.slice(a, b) || ph || '';
+      body.value = v.slice(0, a) + before + sel + after + v.slice(b);
+      body.focus(); body.selectionStart = a + before.length; body.selectionEnd = a + before.length + sel.length;
+      post.body = body.value; touch(); updateCount();
+    }
+    function linePrefix(prefix) {
+      var a = body.selectionStart, v = body.value, ls = v.lastIndexOf('\n', a - 1) + 1;
+      body.value = v.slice(0, ls) + prefix + v.slice(ls);
+      body.focus(); body.selectionStart = body.selectionEnd = a + prefix.length;
+      post.body = body.value; touch(); updateCount();
+    }
+    function insertAt(text) {
+      var a = body.selectionStart, v = body.value;
+      body.value = v.slice(0, a) + text + v.slice(body.selectionEnd);
+      body.focus(); body.selectionStart = body.selectionEnd = a + text.length;
+      post.body = body.value; touch(); updateCount();
+    }
+    var imgFile = h('input', { type: 'file', accept: 'image/*', hidden: true });
+    var imgMsg = h('span', { class: 'help' });
+    imgFile.addEventListener('change', function () {
+      var f = imgFile.files[0]; if (!f) return;
+      needSlug();
+      var path = 'posts/img/' + post.slug + '-' + Date.now().toString(36) + '.jpg';
+      imgMsg.textContent = 'يرفع الصورة…';
+      uploadImage(f, path, 1600).then(function () { insertAt('\n\n![وصف الصورة](' + path + ')\n\n'); imgMsg.textContent = 'أُدرجت الصورة. غيّر النص بين القوسين [ ] ليكون وصفاً لها.'; imgFile.value = ''; })
+        .catch(function (e) { imgMsg.textContent = 'تعذّر الرفع: ' + e.message; });
+    });
+    function tb(label, title, fn) { return h('button', { class: 'tb', type: 'button', title: title, 'aria-label': title, onclick: fn }, label); }
+    var toolbar = h('div', { class: 'toolbar-md', role: 'toolbar', 'aria-label': 'أدوات التنسيق' },
+      tb('عنوان', 'عنوان رئيسي', function () { linePrefix('# '); }),
+      tb('فرعي', 'عنوان فرعي', function () { linePrefix('## '); }),
+      tb('B', 'غامق', function () { wrapSel('**', '**', 'نص غامق'); }),
+      tb('I', 'مائل', function () { wrapSel('*', '*', 'نص مائل'); }),
+      tb('اقتباس', 'اقتباس', function () { linePrefix('> '); }),
+      tb('قائمة', 'قائمة نقطية', function () { linePrefix('- '); }),
+      tb('رابط', 'رابط', function () { wrapSel('[', '](https://)', 'نص الرابط'); }),
+      tb('صورة', 'إدراج صورة', function () { imgFile.click(); }),
+      tb('فيديو', 'فيديو YouTube: ضع الرابط في سطر وحده', function () { insertAt('\n\nhttps://www.youtube.com/watch?v=\n\n'); }));
+    var tabs = h('div', { class: 'wp-tabs' },
+      h('button', { class: 'tb on', type: 'button', onclick: function () { setMode('write'); } }, 'كتابة'),
+      h('button', { class: 'tb', type: 'button', onclick: function () { setMode('preview'); } }, 'معاينة'));
+    function setMode(m) {
+      mode = m;
+      Array.prototype.forEach.call(tabs.children, function (t, i) { t.classList.toggle('on', (i === 0) === (m === 'write')); });
+      body.hidden = m !== 'write'; toolbar.hidden = m !== 'write'; pv.hidden = m === 'write';
+      if (m === 'preview') preview();
+    }
+
+    /* save */
+    var msg = h('p', { class: 'msg', role: 'status', 'aria-live': 'polite' });
+    var saveBtn = h('button', { class: 'btn btn-primary', type: 'button', onclick: save });
+    function refreshBtn() { saveBtn.textContent = post.status === 'published' ? 'حفظ ونشر' : 'حفظ كمسودة'; }
+    refreshBtn();
+
+    function say(t, ok) { msg.className = 'msg' + (ok ? ' ok' : ''); msg.textContent = t; }
+
+    function save() {
+      if (!post.title.trim()) { say('اكتب عنواناً للمقال أولاً.'); return; }
+      if (!MD.plain(post.body)) { say('المقال فارغ. اكتب نصه أولاً.'); return; }
+      needSlug();
+      post.slug = post.slug.trim().toLowerCase();
+      if (!/^[a-z0-9][a-z0-9-]{1,80}$/.test(post.slug)) { say('رابط المقال (Slug) يجب أن يكون بحروف إنجليزية صغيرة وأرقام وشرطات فقط.'); return; }
+      if (isNew && idx.some(function (p) { return p.slug === post.slug; })) { say('يوجد مقال بهذا الرابط. غيّر الـ Slug.'); return; }
+      if (post.series && !post.series.name) post.series = null;
+      var published = post.status === 'published';
+      var meta = {
+        slug: post.slug, title: post.title.trim(), date: post.date || todayStr(), lang: post.lang,
+        excerpt: (post.excerpt || '').trim() || MD.excerpt(post.body, 170), cover: post.cover || undefined,
+        tags: post.tags, book: post.book || undefined, series: post.series || undefined,
+        mins: MD.readMins(post.body), draft: !published
+      };
+      var clean = JSON.parse(JSON.stringify(meta));
+      saveBtn.disabled = true;
+      say('يحفظ المقال…');
+      putText('posts/src/' + post.slug + '.json', JSON.stringify(Object.assign({}, clean, { status: post.status, body: post.body }), null, 2), 'Save post: ' + post.slug)
+        .then(function () { say('يحدّث قائمة المقالات…'); return loadIndex(); })
+        .then(function (cur) {
+          var next = cur.filter(function (p) { return p.slug !== clean.slug; });
+          next.push(clean); sortIdx(next); idx = next;
+          return putText('posts/index.json', JSON.stringify(next, null, 2), 'Update post index').then(function () { return next; });
+        })
+        .then(function (next) {
+          say(published ? 'ينشر صفحة المقال…' : 'يحفظ المسودة…');
+          var step = published ? putText('posts/' + clean.slug + '.html', postHtml(clean, post.body), 'Publish post: ' + clean.slug) : delFile('posts/' + clean.slug + '.html', 'Unpublish post: ' + clean.slug);
+          return step.then(function () { say('يحدّث خلاصة RSS وخريطة الموقع…'); return putText('feed.xml', feedXml(next), 'Update RSS feed'); })
+            .then(function () { return putText('sitemap.xml', sitemapXml(next), 'Update sitemap'); });
+        })
+        .then(function () {
+          postDirty = false; isNew = false; slugIn.readOnly = true;
+          saveBtn.disabled = false;
+          say(published ? 'تم النشر. يظهر المقال على الموقع خلال دقيقة أو دقيقتين.' : 'حُفظت المسودة. لا تظهر للزوار.', true);
+          if (published) msg.append(' ', h('a', { href: 'posts/' + clean.slug + '.html', target: '_blank', rel: 'noopener', text: 'فتح المقال' }));
+        })
+        .catch(function (e) {
+          saveBtn.disabled = false;
+          say(e.status === 401 || e.status === 403 ? 'الرمز منتهي أو لا يملك صلاحية الكتابة.' : 'تعذّر الحفظ: ' + e.message);
+        });
+    }
+
+    function remove() {
+      if (!window.confirm('حذف هذا المقال نهائياً؟')) return;
+      say('يحذف المقال…');
+      delFile('posts/src/' + post.slug + '.json', 'Delete post: ' + post.slug)
+        .then(function () { return delFile('posts/' + post.slug + '.html', 'Delete post page: ' + post.slug); })
+        .then(function () { return loadIndex(); })
+        .then(function (cur) {
+          var next = cur.filter(function (p) { return p.slug !== post.slug; });
+          return putText('posts/index.json', JSON.stringify(next, null, 2), 'Update post index').then(function () { return next; });
+        })
+        .then(function (next) { return putText('feed.xml', feedXml(next), 'Update RSS feed').then(function () { return putText('sitemap.xml', sitemapXml(next), 'Update sitemap'); }).then(function () { return next; }); })
+        .then(function (next) { postDirty = false; blogList(box, next); })
+        .catch(function (e) { say('تعذّر الحذف: ' + e.message); });
+    }
+
+    function back() {
+      if (postDirty && !window.confirm('لديك تعديلات لم تُحفظ. هل تريد الرجوع وتجاهلها؟')) return;
+      postDirty = false;
+      loadIndex().then(function (cur) { blogList(box, cur); }, function () { blogList(box, idx); });
+    }
+
+    var side = h('div', { class: 'grid post-side' },
+      fieldWrap('الحالة', status, null, false),
+      fieldWrap('اللغة', lang, 'تحدد اتجاه المقال وخطه.', false),
+      fieldWrap('التاريخ', date, null, false),
+      fieldWrap('رابط المقال (Slug)', slugIn, 'حروف إنجليزية صغيرة وشرطات، مثل my-first-post. يُحدَّد تلقائياً، ولا يتغير بعد الحفظ.', false),
+      fieldWrap('الكتاب المرتبط', bookSel, 'يظهر في آخر المقال بطاقة الكتاب، ويظهر المقال داخل تفاصيل الكتاب.', true),
+      h('div', { class: 'field wide' }, h('label', { text: 'السلسلة' }), h('div', { class: 'coverrow' }, serName, serOrd), dl,
+        h('span', { class: 'help', text: 'اكتب اسم السلسلة ثم رقم الجزء. المقالات التي تحمل الاسم نفسه تتجمع تلقائياً مع أزرار السابق والتالي.' })),
+      fieldWrap('وسوم (افصل بفاصلة)', tags, null, true),
+      fieldWrap('ملخص قصير (اختياري)', excerpt, 'يظهر في البطاقات وعند المشاركة. إن تركته فارغاً يؤخذ من بداية المقال.', true),
+      h('div', { class: 'field wide' }, h('label', { text: 'صورة الواجهة' }), coverPrev, h('div', { class: 'coverrow' }, coverFile, coverRemove), coverMsg));
+
+    box.append(
+      h('div', { class: 'blog-top' }, h('button', { class: 'linkbtn', type: 'button', onclick: back }, '← قائمة المقالات'), isNew ? null : h('button', { class: 'linkbtn danger', type: 'button', onclick: remove }, 'حذف المقال')),
+      h('div', { class: 'field wide' }, h('label', { text: 'عنوان المقال' }), title),
+      h('div', { class: 'post-layout' },
+        h('div', { class: 'post-main' }, tabs, toolbar, body, pv, imgFile, count, imgMsg),
+        side),
+      h('div', { class: 'post-actions' }, saveBtn, msg));
+    title.id = 'post-title';
+  }
+
   /* ---------- panel and tabs ---------- */
   function renderPanel() {
     var sec = SECTIONS.filter(function (s) { return s.id === current; })[0];
     var panel = $('#panel');
     panel.textContent = '';
     panel.append(h('h2', { text: sec.label }), h('p', { class: 'panel-intro', text: sec.intro }));
+    if (sec.custom) { blogPanel(panel); markTabs(); return; }
     sec.blocks.forEach(function (b) {
       var block = h('section', { class: 'block' }, h('h3', { text: b.title }));
       if (b.help) block.append(h('p', { class: 'block-help', text: b.help }));
@@ -755,11 +1146,16 @@
         block.append(grid);
       } else if (b.type === 'list') {
         listEditor(b, data, b.path, block);
+      } else if (b.type === 'import') {
+        importBlock(block);
       } else if (b.type === 'photo') {
         photoBlock(b, block);
       }
       panel.append(block);
     });
+    markTabs();
+  }
+  function markTabs() {
     Array.prototype.forEach.call($('#tabs').children, function (t) { t.setAttribute('aria-selected', String(t.dataset.id === current)); });
   }
 
@@ -768,6 +1164,8 @@
     tabs.textContent = '';
     SECTIONS.forEach(function (s) {
       tabs.append(h('button', { class: 'tab', type: 'button', 'data-id': s.id, 'aria-selected': String(s.id === current), onclick: function () {
+        if (postDirty && !window.confirm('لديك تعديلات في مقال لم تُحفظ. هل تريد المغادرة وتجاهلها؟')) return;
+        postDirty = false;
         current = s.id;
         renderPanel();
         window.scrollTo(0, 0);
@@ -837,7 +1235,7 @@
     setState('تم التجاهل.');
   });
   window.addEventListener('beforeunload', function (e) {
-    if (dirty) { e.preventDefault(); e.returnValue = ''; }
+    if (dirty || postDirty) { e.preventDefault(); e.returnValue = ''; }
   });
 
   var saved = storedToken();
