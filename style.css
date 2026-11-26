@@ -458,7 +458,7 @@ main::before { content: ""; position: absolute; inset: 0 0 auto 0; height: min(6
 body { transition: opacity .17s ease; }
 body.leaving { opacity: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  body { animation: pagein .45s ease backwards; }
+  body { animation: pagein .2s ease backwards; }
   main::before { animation: drift 16s ease-in-out infinite alternate; }
 }
 @keyframes pagein { from { opacity: 0; } }
@@ -695,14 +695,10 @@ main::before { display: none; }
 @media (prefers-reduced-motion: reduce) { .bg-mesh i { animation: none; } }
 @media print { .bg-mesh { display: none; } }
 
-/* ---------- page change: a slanted colour curtain ---------- */
-html::after { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 115vh; z-index: 9999; pointer-events: none;
-  background: linear-gradient(115deg, #7B1E36 0%, #D1435B 28%, #D99A1E 52%, #2B55D6 76%, #0B7A75 100%);
-  clip-path: polygon(0 7%, 100% 0, 100% 100%, 0 100%); transform: translateY(105%); }
-html.wipe-leave::after { animation: curtain-in .52s cubic-bezier(.7, 0, .3, 1) forwards; }
-html.wipe-in::after { transform: translateY(0); animation: curtain-out .75s .08s cubic-bezier(.7, 0, .3, 1) forwards; }
-html.wipe-in body { animation: none; }
-@keyframes curtain-in { from { transform: translateY(105%); } to { transform: translateY(0); } }
-@keyframes curtain-out { from { transform: translateY(0); } to { transform: translateY(-110%); } }
-@media (prefers-reduced-motion: reduce) { html::after { display: none; } }
-@media print { html::after { display: none; } }
+/* ---------- page change: instant, with a quick cross-fade where the browser supports it ---------- */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out .12s ease both; }
+::view-transition-new(root) { animation: vt-in .18s ease both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }

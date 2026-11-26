@@ -816,7 +816,7 @@
       '<meta property="og:image" content="' + E(img) + '">\n<meta property="article:published_time" content="' + E(m.date) + '">\n<meta name="twitter:card" content="summary_large_image">\n' +
       '<link rel="alternate" type="application/rss+xml" title="Youssef Amir" href="feed.xml">\n<meta name="theme-color" content="#7B1E36">\n' +
       '<link rel="icon" href="' + FAVICON + '">\n' +
-      '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t;if(sessionStorage.getItem(\'wipe\')){sessionStorage.removeItem(\'wipe\');document.documentElement.classList.add(\'wipe-in\')}}catch(e){}</script>\n' +
+      '<script>try{var t=localStorage.getItem(\'theme\');if(!t){t=matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'}document.documentElement.dataset.theme=t}catch(e){}</script>\n' +
       '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="' + FONTS_HREF + '">\n' +
       '<link rel="stylesheet" href="style.css?v=202611262230">\n<script src="defaults.js" defer></script>\n<script src="data.js" defer></script>\n<script src="app.js?v=202611262230" defer></script>\n</head>\n' +
       '<body data-page="post">\n<a class="skip" href="posts/' + m.slug + '.html#main">Skip to content</a>\n<header class="site-header" id="site-header"></header>\n<main id="main">\n' +

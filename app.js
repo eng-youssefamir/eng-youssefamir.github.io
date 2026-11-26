@@ -727,21 +727,7 @@
   }
 
   function pageLinks() {
-    var root = document.documentElement;
-    window.addEventListener('pageshow', function () { root.classList.remove('wipe-leave'); document.body.classList.remove('leaving'); });
-    if (root.classList.contains('wipe-in')) setTimeout(function () { root.classList.remove('wipe-in'); }, 1100);
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href]');
-      if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
-      var u;
-      try { u = new URL(a.href, location.href); } catch (x) { return; }
-      if (u.origin !== location.origin || u.pathname === location.pathname || !/\.html$|\/$/.test(u.pathname)) return;
-      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      e.preventDefault();
-      try { sessionStorage.setItem('wipe', '1'); } catch (x) { /* fine */ }
-      root.classList.add('wipe-leave');
-      setTimeout(function () { location.href = u.href; }, 520);
-    });
+    window.addEventListener('pageshow', function () { document.body.classList.remove('leaving'); });
   }
 
   /* ---------- daily reminder, next step, search palette, scroll bar ---------- */
